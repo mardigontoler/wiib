@@ -1,0 +1,8 @@
+
+# for running tests independent of the Wii	
+stateStack.o: source/stateStack.cpp source/stateStack.hpp
+	g++ -c source/stateStack.cpp
+	
+tests: stateStack.o testing/driver.cpp 
+	g++ testing/driver.cpp *.o -o tests
+

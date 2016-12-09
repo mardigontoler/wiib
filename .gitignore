@@ -1,0 +1,11 @@
+msys.bat.lnk
+*.a
+*.o
+*.dol
+*.elf
+*.exe
+/source/res/
+*.map
+/build/
+
+
