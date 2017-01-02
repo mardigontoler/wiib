@@ -10,8 +10,6 @@ class stateStack{
 		function<void()> top(void){
 			return states.top();
 		};
-
 		function<void()> popState(void);
-	
 	
 };

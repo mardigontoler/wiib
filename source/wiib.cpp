@@ -12,9 +12,12 @@
 #include "stateStack.hpp"
 #include <stack>
 #include <math.h>
+#include "player.hpp"
+#include <memory>
 
 // resource files converted to arrays
 #include "res/wiiblogo.h"
+#include "res/circle.h"
 
 // color constants in hex
 #define GRRLIB_WHITE 0xFFFFFFFF
@@ -25,7 +28,10 @@ using namespace std;
 class Wiib{
     private:
         GRRLIB_texImg * menutexture;
+        GRRLIB_texImg * crosshair1;
         static MODPlay modplay2;
+        shared_ptr<Player> player1;
+        // unique_ptr<Player> player2;
         double xloc = 0;
 
         // using lambdas makes it easier to implement the stack of member methods
@@ -38,7 +44,29 @@ class Wiib{
         //the top item can be the menu, the game, or pause
         stateStack sstack;
 
+        Wiib(){
+            // try to load up sprite textures
+            menutexture = GRRLIB_LoadTexture(wiiblogo);
+            crosshair1 = GRRLIB_LoadTexture(circle);
+            player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
+
+        }
+
         void playState(void){
+            static f32 xloc = 150;
+            if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_1){
+                xloc = 500;
+                GRRLIB_ObjectViewScale(0.5,0.5,0.5);
+            }
+            else{
+                xloc = 150;
+                GRRLIB_ObjectViewScale(1,1,1);
+            }
+            if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT){
+                player1->movex(3);
+            }
+            GRRLIB_DrawImg(xloc,150,menutexture,0,1,1,GRRLIB_WHITE);
+            player1->draw();
 
         }
 
@@ -48,9 +76,9 @@ class Wiib{
 
         void menuState(void)
         {
-            PAD_ScanPads();
-            if(PAD_ButtonsHeld(1) & WPAD_BUTTON_A){
-                GRRLIB_DrawImg(240,240, menutexture, 0, 2, 2, GRRLIB_WHITE);
+            
+            if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A){
+                sstack.pushState(playlambda);
             }
 
 
@@ -62,18 +90,21 @@ class Wiib{
             GRRLIB_Init();
             // Initialise the Wiimotes
             WPAD_Init();
+            WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
 
             // init audio
             AESND_Init();
             
             sstack.pushState(menulambda);
 
-            // try to load up sprite textures
-            menutexture = GRRLIB_LoadTexture(wiiblogo);
+
+
+            // // REMOVE LATER -- TESTING ONLY
+            // Player player1(10,10,crosshair1);
 
             GRRLIB_SetBackgroundColour(0, 0, 0, 255);
+
             // Loop forever
-            double x = 0;
             while (1)
             {
                 WPAD_ScanPads(); // Scan the Wiimotes
@@ -84,14 +115,9 @@ class Wiib{
                 // {
                 // }
                 GRRLIB_FillScreen(GRRLIB_BLACK);
-
-                if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A){
-                    GRRLIB_DrawImg(240,240, menutexture, 0, 2, 2, GRRLIB_WHITE);
-                }   
-                //sstack.top()();
-                //GRRLIB_DrawImg(xLoc,50,liptex,0,1,1,GRRLIB_WHITE);
-
-
+ 
+                sstack.top()();
+                //GRRLIB_DrawImg(150,150,menutexture,0,1,1,GRRLIB_WHITE);
                 GRRLIB_Render(); // Render the frame buffer to the TV
             }
 
