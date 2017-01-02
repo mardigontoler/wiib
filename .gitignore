@@ -7,5 +7,6 @@ msys.bat.lnk
 /source/res/
 *.map
 /build/
-
+.vscode/
+testsrun.ahk
 
