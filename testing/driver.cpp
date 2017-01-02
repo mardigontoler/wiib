@@ -3,7 +3,7 @@
 #include "../source/stateStack.hpp"
 
 void testFunc(void){
-	printf("Testing 123");
+	printf("Testing 123\n");
 }
 
 int main(int argc, char ** argv){

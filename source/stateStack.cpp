@@ -1,8 +1,14 @@
 #include <stack>
 #include "stateStack.hpp"
+#include <functional>
 
-void stateStack::pushState(void (*f)(void)){
+using namespace std;
+
+void stateStack::pushState(function<void()> f){
 	states.push(f);
-	(*f)();
+}
+
+function<void()> stateStack::popState(void){
+	states.pop();
 }
 

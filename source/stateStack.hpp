@@ -1,15 +1,17 @@
 
+#pragma once
 #include <stack>
-
-typedef void (* Funct)(void);
-
+#include <functional>
+using namespace std;
 class stateStack{
 	public:
-		std::stack<void (*)(void)> states; // pointers to functions
-		void pushState(void (*f)(void));
-		Funct top(void){
+		stack<function<void()>> states; // pointers to functions
+		void pushState(function<void()> f);
+		function<void()> top(void){
 			return states.top();
 		};
+
+		function<void()> popState(void);
 	
 	
 };
