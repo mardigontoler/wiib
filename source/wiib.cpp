@@ -57,31 +57,37 @@ class Wiib{
 
         void freeAllTextures(void)
         {
-            // for (auto &texture : texPointers)
-            // {
-            //     GRRLIB_FreeTexture(texture);
-            // }
+            for (auto &texture : texPointers)
+            {
+                GRRLIB_FreeTexture(texture);
+            }
         }
         Wiib(){
             // try to load up sprite textures
-            menutexture = GRRLIB_LoadTexture(wiiblogo);
-            // menutexture = registerTexture(wiib;logo);
-            // crosshair1 = registerTexture(circle);
+            menutexture = registerTexture(wiiblogo);
             crosshair1 = GRRLIB_LoadTexture(circle);
-            // player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
-            // player2.reset(new Player(80, 80, crosshair1));
+            player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
+            player2.reset(new Player(80, 80, crosshair1));
         }
 
         void playState(void){
-            
-            if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT){
-                player1->movex(3);
+            u32 p1held = WPAD_ButtonsHeld(0);
+            if(p1held & WPAD_BUTTON_DOWN){
+                player1->movex(CURSORSPEED);
             }
-            // GRRLIB_DrawImg(150,150,menutexture,0,1,1,GRRLIB_WHITE);
+            if(p1held & WPAD_BUTTON_UP){
+                player1->movex(-CURSORSPEED);
+            }
+            if(p1held & WPAD_BUTTON_RIGHT){
+                player1->movey(-CURSORSPEED);
+            }
+            if(p1held & WPAD_BUTTON_LEFT){
+                player1->movey(CURSORSPEED);
+            }
             
             // drawing game entities
-            // player1->draw();
-            //player2->draw();
+            player1->draw();
+            player2->draw();
 
         }
 
@@ -92,8 +98,7 @@ class Wiib{
         void menuState(void)
         {
             if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A){
-                // sstack.pushState(playlambda);
-                
+                sstack.pushState(playlambda);
             }
             
         }
@@ -124,12 +129,10 @@ class Wiib{
 
                 GRRLIB_FillScreen(GRRLIB_BLACK);
  
-                // sstack.top()();
+                sstack.top()();
                 GRRLIB_DrawImg(150 + 10 * sin(x),150,menutexture,0,1,1,GRRLIB_WHITE);
                 GRRLIB_Render(); // Render the frame buffer to the TV
             }
-            GRRLIB_FreeTexture(menutexture);
-            GRRLIB_FreeTexture(crosshair1);
             freeAllTextures();
             
             GRRLIB_Exit(); // Be a good boy, clear the memory allocated by GRRLIB
