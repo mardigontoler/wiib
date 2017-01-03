@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include <grrlib.h>
+#include <vector>
 #include "properties.hpp"
 
 void Player::draw(void){
@@ -17,3 +18,4 @@ void Player::movey(double amount){
     ypos = ypos < 0? 0 : ypos + SPRITESIZE > WINDOWHEIGHT ?
         WINDOWHEIGHT - SPRITESIZE : ypos;
 }
+

@@ -37,15 +37,22 @@ class Wiib{
         shared_ptr<Player> player1;
         shared_ptr<Player> player2;
 
+        // make a container for game objects
+        // also, a reference to the container so game objects can see each other
+        vector<GameObject> entities;
+
         // using lambdas makes it easier to implement the stack of member methods
         function<void()> menulambda = [this]{menuState();};
         function<void()> playlambda = [this]{playState();};
         function<void()> pauselambda =[this]{pauseState();};
+        function<void()> fanfarelambda = [this]{fanfareState();};
         
     public:
         //create a stack that's used to control the state of the game
         //the top item can be the menu, the game, or pause
         stateStack sstack;
+
+        
 
         // this needs to be called before a texture i used in sprites and stuff
         // these will be cleaned up with the freAllTextures method
@@ -92,6 +99,10 @@ class Wiib{
         }
 
         void pauseState(void){
+
+        }
+
+        void fanfareState(void){
 
         }
 

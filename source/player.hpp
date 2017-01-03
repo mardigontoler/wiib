@@ -1,6 +1,12 @@
 #pragma once
 #include <grrlib.h>
+#include <vector>
+#include <memory>
+#include <iostream>
 #include "properties.hpp"
+#include "GameObject.hpp"
+
+using namespace std;
 
 class Player{
     public:
@@ -16,17 +22,13 @@ class Player{
         void draw(void);
         void movex(double amount);
         void movey(double amount);
+        void grab(vector<GameObject>& objects);
         
 
-    private:
-        int xmin = 0;
-        int ymin = 0;
-        int xmax = WINDOWWIDTH;
-        int ymax = WINDOWHEIGHT;
-
+    protected:
         f32 xpos;
         f32 ypos;
-
         GRRLIB_texImg * crosshairtex;
+        shared_ptr<GameObject> grabbed;
 
 };
