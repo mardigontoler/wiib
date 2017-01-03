@@ -12,27 +12,30 @@
 #include "stateStack.hpp"
 #include <stack>
 #include <math.h>
+#include <vector>
 #include "player.hpp"
 #include <memory>
+#include "properties.hpp"
 
 // resource files converted to arrays
 #include "res/wiiblogo.h"
 #include "res/circle.h"
 
-// color constants in hex
-#define GRRLIB_WHITE 0xFFFFFFFF
-#define GRRLIB_BLACK 0x000000FF
-
 using namespace std;
+
 
 class Wiib{
     private:
+        bool finished = false;
+
+        vector<GRRLIB_texImg*> texPointers;
         GRRLIB_texImg * menutexture;
         GRRLIB_texImg * crosshair1;
+
         static MODPlay modplay2;
+
         shared_ptr<Player> player1;
-        // unique_ptr<Player> player2;
-        double xloc = 0;
+        shared_ptr<Player> player2;
 
         // using lambdas makes it easier to implement the stack of member methods
         function<void()> menulambda = [this]{menuState();};
@@ -44,29 +47,41 @@ class Wiib{
         //the top item can be the menu, the game, or pause
         stateStack sstack;
 
+        // this needs to be called before a texture i used in sprites and stuff
+        // these will be cleaned up with the freAllTextures method
+        GRRLIB_texImg *  registerTexture(const u8 * data){
+            GRRLIB_texImg * ptex = GRRLIB_LoadTexture(data);
+            texPointers.push_back(ptex);
+            return ptex;
+        }
+
+        void freeAllTextures(void)
+        {
+            // for (auto &texture : texPointers)
+            // {
+            //     GRRLIB_FreeTexture(texture);
+            // }
+        }
         Wiib(){
             // try to load up sprite textures
             menutexture = GRRLIB_LoadTexture(wiiblogo);
+            // menutexture = registerTexture(wiib;logo);
+            // crosshair1 = registerTexture(circle);
             crosshair1 = GRRLIB_LoadTexture(circle);
-            player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
-
+            // player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
+            // player2.reset(new Player(80, 80, crosshair1));
         }
 
         void playState(void){
-            static f32 xloc = 150;
-            if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_1){
-                xloc = 500;
-                GRRLIB_ObjectViewScale(0.5,0.5,0.5);
-            }
-            else{
-                xloc = 150;
-                GRRLIB_ObjectViewScale(1,1,1);
-            }
+            
             if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT){
                 player1->movex(3);
             }
-            GRRLIB_DrawImg(xloc,150,menutexture,0,1,1,GRRLIB_WHITE);
-            player1->draw();
+            // GRRLIB_DrawImg(150,150,menutexture,0,1,1,GRRLIB_WHITE);
+            
+            // drawing game entities
+            // player1->draw();
+            //player2->draw();
 
         }
 
@@ -76,12 +91,11 @@ class Wiib{
 
         void menuState(void)
         {
-            
-            if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A){
-                sstack.pushState(playlambda);
+            if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A){
+                // sstack.pushState(playlambda);
+                
             }
-
-
+            
         }
 
 
@@ -97,31 +111,27 @@ class Wiib{
             
             sstack.pushState(menulambda);
 
-
-
-            // // REMOVE LATER -- TESTING ONLY
-            // Player player1(10,10,crosshair1);
-
-            GRRLIB_SetBackgroundColour(0, 0, 0, 255);
-
+            GRRLIB_SetBackgroundColour(20,20,20, 255);
+            double x = 0;
             // Loop forever
             while (1)
             {
+                x += 0.1;
                 WPAD_ScanPads(); // Scan the Wiimotes
                 // If [HOME] was pressed on the first Wiimote, break out of the loop
                 // if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)
-                //     break;
-                // if (WPAD_ButtonsDown(0) & WPAD_BUTTON_2)
-                // {
-                // }
+                    // break;
+
                 GRRLIB_FillScreen(GRRLIB_BLACK);
  
-                sstack.top()();
-                //GRRLIB_DrawImg(150,150,menutexture,0,1,1,GRRLIB_WHITE);
+                // sstack.top()();
+                GRRLIB_DrawImg(150 + 10 * sin(x),150,menutexture,0,1,1,GRRLIB_WHITE);
                 GRRLIB_Render(); // Render the frame buffer to the TV
             }
-
-            //GRRLIB_FreeTexture(menutexture);
+            GRRLIB_FreeTexture(menutexture);
+            GRRLIB_FreeTexture(crosshair1);
+            freeAllTextures();
+            
             GRRLIB_Exit(); // Be a good boy, clear the memory allocated by GRRLIB
             exit(0);       // Use exit() to exit a program, do not use 'return' from main()
         }
@@ -129,11 +139,9 @@ class Wiib{
 
 
 
-
 int main(int argc, char **argv)
 {
 
-    printf("Entering main\n");
     Wiib game;
     game.run();
     

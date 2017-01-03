@@ -18,7 +18,6 @@ int main(int argc, char ** argv){
 	
 }
 
-TEST_CASE("Testing struct stuff"){
-	REQUIRE(true);
+TEST_CASE("Testing struct stuff"){	REQUIRE(true);
 	
 }

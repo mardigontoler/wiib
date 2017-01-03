@@ -12,3 +12,5 @@ function<void()> stateStack::popState(void){
 	states.pop();
 }
 
+// maybe have the stack collapse down to the bottom-most
+// identical state that's being pushed'
