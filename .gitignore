@@ -4,7 +4,7 @@ msys.bat.lnk
 *.dol
 *.elf
 *.exe
-/source/res/
+### /source/res/
 *.map
 /build/
 .vscode/
