@@ -91,6 +91,8 @@ class Wiib{
             if(p1held & WPAD_BUTTON_LEFT){
                 player1->movey(CURSORSPEED);
             }
+
+            GRRLIB_Printf(30,30, menutexture, GRRLIB_WHITE,1,"Hello World");
             
             // drawing game entities
             player1->draw();
