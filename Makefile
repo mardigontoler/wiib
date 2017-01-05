@@ -18,9 +18,9 @@ include $(DEVKITPPC)/wii_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	boot
 BUILD		:=	build
-SOURCES		:=	source source/res GRRLIB_addon
+SOURCES		:=	source source/res GRRLIB_addon 
 DATA		:=	data
-INCLUDES	:=
+INCLUDES	:=  libs
 
 
 #---------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ LIBS	:=	-lgrrlib -lfreetype -lpngu -lpng -ljpeg -lz -lfat -lwiiuse -lbte -lmodpl
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CURDIR)/$(GRRLIB)
+LIBDIRS	:= $(CURDIR)/$(GRRLIB) 
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

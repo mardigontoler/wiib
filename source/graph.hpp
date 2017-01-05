@@ -1,5 +1,4 @@
 
-
 //Wiib - a Wii Homebrew multiplayer game
 //Copyright (C) 2017 Mardigon Toler
 
@@ -16,23 +15,38 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #pragma once
+#include <memory>
+#include <vector>
+#include <grrlib.h>
+#include <list>
 
+using namespace std;
 
-
-#include "Status.hpp"
-
-class GameObject
+struct Vertex
 {
-  private:
+    int id;
     f32 xpos;
     f32 ypos;
-    Status status;
+    bool visited = false;
+    int dvalue; // distance value, gets reset a lot in the bfs algorithm
+    list<shared_ptr<struct Vertex>> adjVerticesPtrs;
+};
+typedef struct Vertex Vertex;
 
+// Simple graph
+// implemented as an adjacency list
+class Graph
+{
+  private:
+    vector<Vertex> vertices;
   public:
-    GameObject()
-    {
+    Graph()
+    {   
     }
+
+    // adds connections from id1 to id2 and also from id2 to id1
+    void connect(int id1, int id2);
+
+    shared_ptr<list<Vertex>> shortestPath(int id1, int id2);
 };

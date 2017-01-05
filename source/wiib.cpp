@@ -34,6 +34,8 @@
 #include <memory>
 #include "properties.hpp"
 
+#include "ecs.h"
+
 // resource files converted to arrays
 #include "res/wiiblogo.h"
 #include "res/circle.h"
