@@ -36,10 +36,10 @@
 
 #include "ecs.h"
 
-// resource files converted to arrays
+// resource files converted to arrays adfasdf
 #include "res/wiiblogo.h"
 #include "res/circle.h"
-#include "res/font/VT323.h"
+#include "res/font/VTfont.hpp"
 
 using namespace std;
 

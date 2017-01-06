@@ -20,7 +20,7 @@ TARGET		:=	boot
 BUILD		:=	build
 SOURCES		:=	source source/res source/res/font GRRLIB_addon 
 DATA		:=	data
-INCLUDES	:=  libs
+INCLUDES	:=  libs source/res/font
 
 
 #---------------------------------------------------------------------------------
