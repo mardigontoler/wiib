@@ -122,6 +122,7 @@ class Wiib
         // drawing game entities
         player1->draw();
         player2->draw();
+        
     }
 
     void pauseState(void)
