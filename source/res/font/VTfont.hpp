@@ -24,6 +24,7 @@
 
 class VTfont{
   public:
-    inline VTfont();
+    VTfont();
     const unsigned char *data;
+    int size;
 };

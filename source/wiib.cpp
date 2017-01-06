@@ -52,6 +52,8 @@ class Wiib
     GRRLIB_texImg *menutexture;
     GRRLIB_texImg *crosshair1;
 
+    VTfont vtfont;
+    GRRLIB_ttfFont *rawptrfont;
     static MODPlay modplay2;
 
     shared_ptr<Player> player1;
@@ -88,9 +90,10 @@ class Wiib
             GRRLIB_FreeTexture(texture);
         }
     }
+
     Wiib()
     {
-        // try to load up sprite textures
+        // try to load up sprite textures and the font
         menutexture = registerTexture(wiiblogo);
         crosshair1 = GRRLIB_LoadTexture(circle);
         player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
@@ -117,12 +120,9 @@ class Wiib
             player1->movey(CURSORSPEED);
         }
 
-        GRRLIB_Printf(30, 30, menutexture, GRRLIB_WHITE, 1, "Hello World");
-
         // drawing game entities
         player1->draw();
         player2->draw();
-        
     }
 
     void pauseState(void)
@@ -149,6 +149,9 @@ class Wiib
         WPAD_Init();
         WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
 
+        // For some reason, the font won't load correctly in the constructor, so load it here
+        rawptrfont = GRRLIB_LoadTTF(vtfont.data, vtfont.size);
+
         // init audio
         AESND_Init();
 
@@ -156,7 +159,9 @@ class Wiib
 
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
         double x = 0;
+        auto test = "Hello world";
         // Loop forever
+        
         while (1)
         {
             x += 0.1;
@@ -168,10 +173,19 @@ class Wiib
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
             sstack.top()();
-            GRRLIB_DrawImg(150 + 10 * sin(x), 150, menutexture, 0, 1, 1, GRRLIB_WHITE);
+
+            GRRLIB_PrintfTTF(50, 50,
+                             rawptrfont, test,
+                             30, 0xFF00FFFF);
+
+            if (rawptrfont)
+            {
+                GRRLIB_DrawImg(150 + 10 * sin(x), 150, menutexture, 0, 1, 1, GRRLIB_WHITE);
+            }
             GRRLIB_Render(); // Render the frame buffer to the TV
         }
         freeAllTextures();
+        GRRLIB_FreeTTF(rawptrfont);
 
         GRRLIB_Exit(); // Be a good boy, clear the memory allocated by GRRLIB
         exit(0);       // Use exit() to exit a program, do not use 'return' from main()

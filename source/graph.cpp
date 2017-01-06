@@ -67,7 +67,7 @@ shared_ptr<list<Vertex>> Graph::shortestPath(int id1, int id2){
             }
         }
     }
-    // at this poin, this bfs is complete. now trace through p-values
+    // at this point, this bfs is complete. now trace through p-values
     // to actually create a path through the vertices
     
 

@@ -21,4 +21,5 @@
 // constructor
 VTfont::VTfont(void){
     data = VT323;
+    size = VT323_size;
 }
