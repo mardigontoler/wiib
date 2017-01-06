@@ -18,7 +18,7 @@ include $(DEVKITPPC)/wii_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	boot
 BUILD		:=	build
-SOURCES		:=	source source/res GRRLIB_addon 
+SOURCES		:=	source source/res source/res/font GRRLIB_addon 
 DATA		:=	data
 INCLUDES	:=  libs
 
@@ -114,6 +114,10 @@ run:
 reload:
 	psoload -r $(TARGET).dol
 
+#---------------------------------------------------------------------------------
+font: $(CURDIR)/source/res/font/VT323.h.gch
+$(CURDIR)/source/res/font/VT323.h.gch:
+	@$(CC) $(CURDIR)/source/res/font/VT323.h -MMD -MP -MF $(CFLAGS) -c $< -o $@ $(ERROR_FILTER)
 
 #---------------------------------------------------------------------------------
 else

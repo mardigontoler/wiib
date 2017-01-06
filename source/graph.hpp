@@ -28,7 +28,7 @@ struct Vertex
     int id;
     f32 xpos;
     f32 ypos;
-    bool visited = false;
+    shared_ptr<struct Vertex> parent; // resets a lot during the bfs algorithm
     int dvalue; // distance value, gets reset a lot in the bfs algorithm
     list<shared_ptr<struct Vertex>> adjVerticesPtrs;
 };
@@ -48,5 +48,10 @@ class Graph
     // adds connections from id1 to id2 and also from id2 to id1
     void connect(int id1, int id2);
 
+    // return a smart pointer to the vertex with the associated id
+    shared_ptr<Vertex> getVertex(int _id);
+
     shared_ptr<list<Vertex>> shortestPath(int id1, int id2);
+
+    vector<shared_ptr<Vertex>> getAdjTo(int _id);
 };

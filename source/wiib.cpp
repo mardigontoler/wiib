@@ -39,6 +39,7 @@
 // resource files converted to arrays
 #include "res/wiiblogo.h"
 #include "res/circle.h"
+#include "res/font/VT323.h"
 
 using namespace std;
 
