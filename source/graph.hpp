@@ -18,40 +18,47 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <grrlib.h>
 #include <list>
 
 using namespace std;
 
-struct Vertex
+class Vertex
 {
+  public:
+    Vertex(int _id, double x, double y):id(_id),
+                                  xpos(x),
+                                  ypos(y)
+    {}
     int id;
-    f32 xpos;
-    f32 ypos;
-    shared_ptr<struct Vertex> parent; // resets a lot during the bfs algorithm
-    int dvalue; // distance value, gets reset a lot in the bfs algorithm
-    list<shared_ptr<struct Vertex>> adjVerticesPtrs;
+    double xpos;
+    double ypos;
+    int parentid = -1; // resets a lot during the bfs algorithm
+    bool visited = false; // distance value, gets reset a lot in the bfs algorithm
+    list<Vertex*> adjVerticesPtrs;
 };
-typedef struct Vertex Vertex;
+
 
 // Simple graph
 // implemented as an adjacency list
 class Graph
 {
   private:
-    vector<Vertex> vertices;
+    
   public:
+	vector<Vertex*> vertices;
     Graph()
     {   
     }
 
+    void addVertex(Vertex* v);
+
     // adds connections from id1 to id2 and also from id2 to id1
-    void connect(int id1, int id2);
+    void addConnection(int id1, int id2);
 
     // return a smart pointer to the vertex with the associated id
-    shared_ptr<Vertex> getVertex(int _id);
+    Vertex* getVertex(int _id);
 
-    shared_ptr<list<Vertex>> shortestPath(int id1, int id2);
+    void shortestPath(int id1);
 
-    vector<shared_ptr<Vertex>> getAdjTo(int _id);
+    vector<Vertex*> getAdjTo(int _id);
 };

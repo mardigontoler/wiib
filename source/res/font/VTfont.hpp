@@ -15,12 +15,13 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#pragma once
+
 // this is a header for a wrapper that encapuslates the data
 // from a large header file so that Make doesn't need to slow
 // down the compile process which would happen if that file was 
 // included normally
-
-#pragma once
 
 class VTfont{
   public:

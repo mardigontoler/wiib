@@ -18,6 +18,7 @@
 
 #include <grrlib.h>
 #include <stdlib.h>
+#include <cstdio>
 #include <wiiuse/wpad.h>
 #include <stdio.h>
 #include <fat.h>
@@ -31,6 +32,7 @@
 #include <math.h>
 #include <vector>
 #include "player.hpp"
+#include "graph.hpp"
 #include <memory>
 #include "properties.hpp"
 
@@ -159,29 +161,32 @@ class Wiib
 
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
         double x = 0;
-        auto test = "Hello world";
-        // Loop forever
-        
-        while (1)
+
+        Graph g;
+        Vertex a(1, 50, 40);
+        Vertex b(2, 20, 60);
+        g.addVertex(&a);
+        g.addVertex(&b);
+        g.addConnection(1, 2); // hook a and b up
+
+        static char buffer[255];
+        g.shortestPath(1);
+
+        double tempx;
+        while (true)
         {
-            x += 0.1;
+            tempx = 30;
             WPAD_ScanPads(); // Scan the Wiimotes
             // If [HOME] was pressed on the first Wiimote, break out of the loop
-            // if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)
-            // break;
+            if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)
+                break;
 
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
-            sstack.top()();
+            //sstack.top()();
 
-            GRRLIB_PrintfTTF(50, 50,
-                             rawptrfont, test,
-                             30, 0xFF00FFFF);
-
-            if (rawptrfont)
-            {
-                GRRLIB_DrawImg(150 + 10 * sin(x), 150, menutexture, 0, 1, 1, GRRLIB_WHITE);
-            }
+            sprintf(buffer, "%d  ", b.parentid);
+            GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }
         freeAllTextures();
