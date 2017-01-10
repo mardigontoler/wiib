@@ -16,34 +16,11 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-#include <grrlib.h>
-#include <vector>
-#include <memory>
-#include <iostream>
-#include "properties.hpp"
-#include "GameObject.hpp"
-#include "ecs.h"
+#include <cmath>
 
-using namespace std;
+typedef float f32;
 
-class Player
-{
-  public:
-    unsigned int hp = 100; // player health. do fanfare and restart if 0
-    u32 crosscolor = 0xFFFFFFFF;
-    Player(int _x, int _y, GRRLIB_texImg *_crosshair) : xpos(_x),
-                                                        ypos(_y),
-                                                        crosshairtex(_crosshair)
-    {
-    }
 
-    void draw(void);
-    void movex(double amount);
-    void movey(double amount);
-
-    f32 xpos;
-    f32 ypos;
-    GRRLIB_texImg *crosshairtex;
-    shared_ptr<Entity> grabbed;
-};
+f32 distance(f32 x1, f32 y1, f32 x2, f32 y2){
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}

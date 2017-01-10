@@ -17,7 +17,25 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GameObject.hpp"
+#include <grrlib.h>
+#include "ecs.h"
+#include "misc.hpp"
 
-void DrawingSystem::update(float time) {
+f32 x;
 
+void DrawingSystem::update(float time)
+{
+    for (auto entity : entities().with<Drawable, Status>())
+    {
+        Status &status = entity.get<Status>();
+        Drawable &drawable = entity.get<Drawable>();
+        GRRLIB_DrawImg(status.xpos, status.ypos, drawable.ptexture, 0, 1, 1, drawable.color);
+    }
+}
+
+void PathSystem::update(float time)
+{
+    for (auto entity : entities().with<PathSystem, Status>()){
+
+    }
 }

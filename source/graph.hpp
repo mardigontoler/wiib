@@ -54,23 +54,7 @@ class Graph
     //Constructor for creating the graph from a vector
     //formatted to consider every 2 values the x and y
     //coordinates of each node.
-    Graph(vector<double>& nodevector, vector<double>& nodeconnections){
-      // for loop increments by 2 at the end of each step
-      unsigned int i;
-      unsigned int idnum;
-      for(i = 0, idnum = 0; i < nodevector.size(); i += 2, idnum++){
-        f32 xpos = nodevector[i];
-        f32 ypos = nodevector[i+1];
-        shared_ptr<Vertex> v(new Vertex(idnum, xpos, ypos));
-        addVertex(v);
-      }
-      // now, use the other param to connect the appropriate nodes together
-      for(unsigned int j = 0; j < nodeconnections.size(); j += 2){
-        unsigned int id1 = nodeconnections[j];
-        unsigned int id2 = nodeconnections[j+1];
-        addConnection(id1, id2);
-      }
-    }
+    Graph(vector<double>& nodevector, vector<double>& nodeconnections);
 
     void addVertex(shared_ptr<Vertex> v);
 

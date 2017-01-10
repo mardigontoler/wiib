@@ -61,6 +61,9 @@ class Wiib
     shared_ptr<Player> player1;
     shared_ptr<Player> player2;
 
+    ecs::EntityManager entities;
+    ecs::SystemManager playSystems;
+
     // using lambdas makes it easier to implement the stack of member methods
     function<void()> menulambda = [this] { menuState(); };
     function<void()> playlambda = [this] { playState(); };
@@ -89,7 +92,7 @@ class Wiib
         }
     }
 
-    Wiib()
+    Wiib() : playSystems(entities)
     {
         // try to load up sprite textures and the font
         menutexture = registerTexture(wiiblogo);
@@ -121,6 +124,9 @@ class Wiib
         // drawing game entities
         player1->draw();
         player2->draw();
+
+        playSystems.update(0);
+
     }
 
     void pauseState(void)
@@ -165,12 +171,12 @@ class Wiib
 
         static char buffer[255];
         
-        ecs::EntityManager entities;
-        ecs::SystemManager systems(entities);
+        playSystems.add<DrawingSystem>();
         ecs::Entity testent = entities.create();
         testent.add<HitPoints>(100);
-        //testent.add<Drawable>();
-        //testent.add<Allegiance>();
+        testent.add<Drawable>(crosshair1);
+        testent.add<Allegiance>(0);
+        testent.add<Status>(200, 200);
 
         double tempx;
         while (true)
@@ -184,8 +190,8 @@ class Wiib
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
             sstack.top()();
-            HitPoints& hp1 = testent.get<HitPoints>();
-            sprintf(buffer, "%d  ", hp1.hp);
+            Allegiance& alleg = testent.get<Allegiance>();
+            sprintf(buffer, "%d  ", alleg.alliedID);
             GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }

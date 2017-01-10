@@ -17,6 +17,9 @@
 
 #pragma once
 #include "ecs.h"
+#include <grrlib.h>
+#include "ecs.h"
+#include "graph.hpp"
 
 /**
 This file actually defines entities to be used with
@@ -46,15 +49,46 @@ struct Allegiance
 
 struct Status
 {
+  Status(f32 x, f32 y) : xpos(x), ypos(y)
+  {
+  }
+  f32 xpos;
+  f32 ypos;
   bool grabbed = false;
 };
 
 struct Drawable
 {
+  Drawable(GRRLIB_texImg *_ptexture) : ptexture(_ptexture)
+  {
+  }
+  GRRLIB_texImg *ptexture;
+  u32 color = 0xFFFFFFFF;
+};
+
+
+// estinations include the destination Vertex itself
+// as well as a path that leads to it, implemented
+// as a vector of pointers to vertices
+// The system that works with this component
+// usually tries to move an entity towards the next
+// vertex in the vector. 
+struct Destination{
+  vector<Vertex*> path;
+};
+
+class PathSystem : public System
+{
+  public:
+    void update(float time) override;
 };
 
 class DrawingSystem : public System
 {
-  public:
-    void update(float time) override;
+public:
+  // DrawingSystem(EntityManager &_entities) : entities(_entities)
+  // {
+  // }
+  // EntityManager &entities;
+  void update(float time) override;
 };
