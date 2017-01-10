@@ -61,10 +61,6 @@ class Wiib
     shared_ptr<Player> player1;
     shared_ptr<Player> player2;
 
-    // make a container for game objects
-    // also, a reference to the container so game objects can see each other
-    vector<GameObject> entities;
-
     // using lambdas makes it easier to implement the stack of member methods
     function<void()> menulambda = [this] { menuState(); };
     function<void()> playlambda = [this] { playState(); };
@@ -165,11 +161,16 @@ class Wiib
         #include "res/testMapNodes.hpp"
         Graph g(nodes1, nodeConnections1);
         g.shortestPath(0);
-
         shared_ptr<Vertex> v = g.getVertex(2);
 
         static char buffer[255];
         
+        ecs::EntityManager entities;
+        ecs::SystemManager systems(entities);
+        ecs::Entity testent = entities.create();
+        testent.add<HitPoints>(100);
+        //testent.add<Drawable>();
+        //testent.add<Allegiance>();
 
         double tempx;
         while (true)
@@ -183,8 +184,8 @@ class Wiib
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
             sstack.top()();
-
-            sprintf(buffer, "%d  ", v->parentid);
+            HitPoints& hp1 = testent.get<HitPoints>();
+            sprintf(buffer, "%d  ", hp1.hp);
             GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }

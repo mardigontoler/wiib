@@ -1,5 +1,4 @@
 
-
 //Wiib - a Wii Homebrew multiplayer game
 //Copyright (C) 2017 Mardigon Toler
 
@@ -16,23 +15,46 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #pragma once
+#include "ecs.h"
 
+/**
+This file actually defines entities to be used with
+an entity component system: OPENECS
+https://github.com/Gronis/OpenEcs
 
+**/
 
-#include "Status.hpp"
+using namespace ecs;
 
-class GameObject
+struct HitPoints
 {
-  private:
-    f32 xpos;
-    f32 ypos;
-    Status status;
+  HitPoints(int _val) : hp(_val)
+  {
+  }
+  int hp;
+};
 
+// the id of the player to ally with
+struct Allegiance
+{
+  Allegiance(int _val) : alliedID(_val)
+  {
+  }
+  int alliedID;
+};
+
+struct Status
+{
+  bool grabbed = false;
+};
+
+struct Drawable
+{
+};
+
+class DrawingSystem : public System
+{
   public:
-    GameObject()
-    {
-    }
+    void update(float time) override;
 };

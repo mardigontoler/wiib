@@ -23,6 +23,7 @@
 #include <iostream>
 #include "properties.hpp"
 #include "GameObject.hpp"
+#include "ecs.h"
 
 using namespace std;
 
@@ -40,11 +41,10 @@ class Player
     void draw(void);
     void movex(double amount);
     void movey(double amount);
-    void grab(vector<GameObject> &objects);
 
   protected:
     f32 xpos;
     f32 ypos;
     GRRLIB_texImg *crosshairtex;
-    shared_ptr<GameObject> grabbed;
+    shared_ptr<Entity> grabbed;
 };

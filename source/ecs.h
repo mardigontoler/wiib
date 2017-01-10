@@ -1,6 +1,7 @@
 ///
 /// OpenEcs v0.1.101
 /// Generated: 2016-02-04 13:54:34.305076
+/// https://github.com/Gronis/OpenEcs
 /// ----------------------------------------------------------
 /// This file has been generated from multiple files. Do not modify
 /// ----------------------------------------------------------
