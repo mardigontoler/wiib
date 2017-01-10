@@ -16,6 +16,7 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include <grrlib.h>
 #include <memory>
 #include <vector>
 #include <list>
@@ -25,16 +26,16 @@ using namespace std;
 class Vertex
 {
   public:
-    Vertex(int _id, double x, double y):id(_id),
+    Vertex(unsigned int _id, double x, double y):id(_id),
                                   xpos(x),
                                   ypos(y)
     {}
-    int id;
+    unsigned int id;
     double xpos;
     double ypos;
     int parentid = -1; // resets a lot during the bfs algorithm
     bool visited = false; // distance value, gets reset a lot in the bfs algorithm
-    list<Vertex*> adjVerticesPtrs;
+    list<shared_ptr<Vertex>> adjVerticesPtrs;
 };
 
 
@@ -45,20 +46,41 @@ class Graph
   private:
     
   public:
-	vector<Vertex*> vertices;
+	vector<shared_ptr<Vertex>> vertices;
     Graph()
     {   
     }
 
-    void addVertex(Vertex* v);
+    //Constructor for creating the graph from a vector
+    //formatted to consider every 2 values the x and y
+    //coordinates of each node.
+    Graph(vector<double>& nodevector, vector<double>& nodeconnections){
+      // for loop increments by 2 at the end of each step
+      unsigned int i;
+      unsigned int idnum;
+      for(i = 0, idnum = 0; i < nodevector.size(); i += 2, idnum++){
+        f32 xpos = nodevector[i];
+        f32 ypos = nodevector[i+1];
+        shared_ptr<Vertex> v(new Vertex(idnum, xpos, ypos));
+        addVertex(v);
+      }
+      // now, use the other param to connect the appropriate nodes together
+      for(unsigned int j = 0; j < nodeconnections.size(); j += 2){
+        unsigned int id1 = nodeconnections[j];
+        unsigned int id2 = nodeconnections[j+1];
+        addConnection(id1, id2);
+      }
+    }
+
+    void addVertex(shared_ptr<Vertex> v);
 
     // adds connections from id1 to id2 and also from id2 to id1
-    void addConnection(int id1, int id2);
+    void addConnection(unsigned int id1, unsigned int id2);
 
     // return a smart pointer to the vertex with the associated id
-    Vertex* getVertex(int _id);
+    shared_ptr<Vertex> getVertex(unsigned int _id);
 
-    void shortestPath(int id1);
+    void shortestPath(unsigned int id1);
 
-    vector<Vertex*> getAdjTo(int _id);
+    vector<shared_ptr<Vertex>> getAdjTo(unsigned int _id);
 };

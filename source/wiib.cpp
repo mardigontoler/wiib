@@ -162,15 +162,14 @@ class Wiib
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
         double x = 0;
 
-        Graph g;
-        Vertex a(1, 50, 40);
-        Vertex b(2, 20, 60);
-        g.addVertex(&a);
-        g.addVertex(&b);
-        g.addConnection(1, 2); // hook a and b up
+        #include "res/testMapNodes.hpp"
+        Graph g(nodes1, nodeConnections1);
+        g.shortestPath(0);
+
+        shared_ptr<Vertex> v = g.getVertex(2);
 
         static char buffer[255];
-        g.shortestPath(1);
+        
 
         double tempx;
         while (true)
@@ -183,9 +182,9 @@ class Wiib
 
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
-            //sstack.top()();
+            sstack.top()();
 
-            sprintf(buffer, "%d  ", b.parentid);
+            sprintf(buffer, "%d  ", v->parentid);
             GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }

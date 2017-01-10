@@ -21,8 +21,9 @@
 #include <memory>
 #include <iostream>
 
-Vertex* Graph::getVertex(int _id){
-    for(Vertex* vert: vertices){
+
+shared_ptr<Vertex> Graph::getVertex(unsigned int _id){
+    for(shared_ptr<Vertex> vert: vertices){
         if(vert->id == _id){
             return vert;
         }
@@ -32,11 +33,11 @@ Vertex* Graph::getVertex(int _id){
 
 // get a list of pointers to all the adjacent vertices to the vertex with
 // the specified id
-vector<Vertex*> Graph::getAdjTo(int _id){
-    vector<Vertex*> result;
-    for(Vertex *vert : vertices){
+vector<shared_ptr<Vertex>> Graph::getAdjTo(unsigned int _id){
+    vector<shared_ptr<Vertex>> result;
+    for(shared_ptr<Vertex> vert : vertices){
         if(vert->id == _id){
-            for(Vertex *padj : vert->adjVerticesPtrs){
+            for(shared_ptr<Vertex> padj : vert->adjVerticesPtrs){
                 result.push_back(padj);
             }
             return result;
@@ -46,20 +47,20 @@ vector<Vertex*> Graph::getAdjTo(int _id){
 }
 
 // breadth first search to find the shortest path from id1 to id2
-void Graph::shortestPath(int id1){
-    for(Vertex *vert : vertices){
+void Graph::shortestPath(unsigned int id1){
+    for(shared_ptr<Vertex> vert : vertices){
         vert->visited = false;
         vert->parentid = -1;
     }
-    queue<Vertex*> vertqueue;
-	Vertex *root = getVertex(id1);
+    queue<shared_ptr<Vertex>> vertqueue;
+	shared_ptr<Vertex> root = getVertex(id1);
     root->visited = true;
     vertqueue.push(root);
     while(!vertqueue.empty()){
-        Vertex *current = vertqueue.front();
+        shared_ptr<Vertex> current = vertqueue.front();
         vertqueue.pop();
         // get all adjacent vertices to the current vertex
-        for(Vertex *pvert : getAdjTo(current->id)){
+        for(shared_ptr<Vertex> pvert : getAdjTo(current->id)){
             if(!(pvert->visited)){
                 pvert->visited = true;
                 pvert->parentid = current->id;
@@ -70,15 +71,15 @@ void Graph::shortestPath(int id1){
 
 }
 
-void Graph::addVertex(Vertex *v){
+void Graph::addVertex(shared_ptr<Vertex> v){
     vertices.push_back(v);
 	
 }
 
 
-void Graph::addConnection(int id1, int id2){
-    Vertex *v1 = getVertex(id1);
-    Vertex *v2 = getVertex(id2);
+void Graph::addConnection(unsigned int id1, unsigned int id2){
+    shared_ptr<Vertex> v1 = getVertex(id1);
+    shared_ptr<Vertex> v2 = getVertex(id2);
     v1->adjVerticesPtrs.push_back(v2);
     v2->adjVerticesPtrs.push_back(v1);
 }
