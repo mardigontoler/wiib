@@ -20,8 +20,9 @@
 #include <list>
 #include <memory>
 #include <iostream>
+#include <stack>
 
-Graph::Graph(vector<double>& nodevector, vector<double>& nodeconnections)
+Graph::Graph(vector<double> &nodevector, vector<unsigned int> &nodeconnections)
 {
     // for loop increments by 2 at the end of each step
     unsigned int i;
@@ -42,6 +43,8 @@ Graph::Graph(vector<double>& nodevector, vector<double>& nodeconnections)
     }
 }
 
+
+// return a pointer from the vertex with the specified label
 shared_ptr<Vertex> Graph::getVertex(unsigned int _id)
 {
     for (shared_ptr<Vertex> vert : vertices)
@@ -102,10 +105,42 @@ void Graph::shortestPath(unsigned int id1)
     }
 }
 
+
+
 void Graph::addVertex(shared_ptr<Vertex> v)
 {
     vertices.push_back(v);
 }
+
+
+
+
+// from id1 to id2
+queue<shared_ptr<Vertex>> Graph::getPath(unsigned int id1, unsigned int id2){
+    // set up the connections through parent pointers
+    shortestPath(id1);
+    // create a stack and fill it up as we trace through parent pointers
+    stack<int> tempstack;
+    queue<shared_ptr<Vertex>> result;
+
+    // not vertex w/ id1 since we're working backwards
+    shared_ptr<Vertex> pvert = getVertex(id2); 
+    while(pvert != nullptr){
+        tempstack.push(pvert->id);
+        pvert = getVertex(pvert->parentid);
+    }
+
+    // dump the stack into the queue
+    while(!tempstack.empty()){
+        shared_ptr<Vertex> v = getVertex(tempstack.top());
+        tempstack.pop();
+        result.push(v);
+    }
+    return result;
+}
+
+
+
 
 void Graph::addConnection(unsigned int id1, unsigned int id2)
 {

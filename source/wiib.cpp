@@ -69,6 +69,7 @@ class Wiib
     function<void()> playlambda = [this] { playState(); };
     function<void()> pauselambda = [this] { pauseState(); };
     function<void()> fanfarelambda = [this] { fanfareState(); };
+    function<void()> exitlambda = [this] { exitState(); };
 
   public:
     //create a stack that's used to control the state of the game
@@ -133,6 +134,10 @@ class Wiib
     {
     }
 
+    void exitState(void){
+    }
+
+
     void fanfareState(void)
     {
     }
@@ -162,37 +167,38 @@ class Wiib
         sstack.pushState(menulambda);
 
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
-        double x = 0;
 
         #include "res/testMapNodes.hpp"
         Graph g(nodes1, nodeConnections1);
-        g.shortestPath(0);
-        shared_ptr<Vertex> v = g.getVertex(2);
 
-        static char buffer[255];
+        static char buffer[255]; // temporary buffer used for printing
         
+        // systems need to be added to the manager for
+        // their update to work
         playSystems.add<DrawingSystem>();
+        playSystems.add<PathSystem>();
+
         ecs::Entity testent = entities.create();
         testent.add<HitPoints>(100);
         testent.add<Drawable>(crosshair1);
-        testent.add<Allegiance>(0);
+        testent.add<Path>();
+        Path& p = testent.get<Path>();
+        p.vertices = g.getPath(0, 2);
         testent.add<Status>(200, 200);
 
-        double tempx;
         while (true)
         {
-            tempx = 30;
             WPAD_ScanPads(); // Scan the Wiimotes
             // If [HOME] was pressed on the first Wiimote, break out of the loop
             if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)
-                break;
+                sstack.pushState(exitlambda);
 
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
             sstack.top()();
-            Allegiance& alleg = testent.get<Allegiance>();
-            sprintf(buffer, "%d  ", alleg.alliedID);
-            GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
+            //Allegiance& alleg = testent.get<Allegiance>();
+            //sprintf(buffer, "%d  ", alleg.alliedID);
+            //GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }
         freeAllTextures();

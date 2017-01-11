@@ -1,4 +1,6 @@
 msys.bat.lnk
+*.py
+*.hpp.gch
 *.a
 *.o
 *.dol

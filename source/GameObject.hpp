@@ -20,6 +20,7 @@
 #include <grrlib.h>
 #include "ecs.h"
 #include "graph.hpp"
+#include <queue>
 
 /**
 This file actually defines entities to be used with
@@ -54,6 +55,7 @@ struct Status
   }
   f32 xpos;
   f32 ypos;
+  f32 stepSpeed = 5;
   bool grabbed = false;
 };
 
@@ -69,12 +71,13 @@ struct Drawable
 
 // estinations include the destination Vertex itself
 // as well as a path that leads to it, implemented
-// as a vector of pointers to vertices
+// as a queue of pointers to vertices
 // The system that works with this component
 // usually tries to move an entity towards the next
 // vertex in the vector. 
-struct Destination{
-  vector<Vertex*> path;
+struct Path{
+  queue<shared_ptr<Vertex>> vertices;
+  f32 radius = 64;
 };
 
 class PathSystem : public System
@@ -86,9 +89,5 @@ class PathSystem : public System
 class DrawingSystem : public System
 {
 public:
-  // DrawingSystem(EntityManager &_entities) : entities(_entities)
-  // {
-  // }
-  // EntityManager &entities;
   void update(float time) override;
 };
