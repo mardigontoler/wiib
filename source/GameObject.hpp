@@ -1,5 +1,4 @@
 
-
 //Wiib - a Wii Homebrew multiplayer game
 //Copyright (C) 2017 Mardigon Toler
 
@@ -16,23 +15,79 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #pragma once
+#include "ecs.h"
+#include <grrlib.h>
+#include "ecs.h"
+#include "graph.hpp"
+#include <queue>
 
+/**
+This file actually defines entities to be used with
+an entity component system: OPENECS
+https://github.com/Gronis/OpenEcs
 
+**/
 
-#include "Status.hpp"
+using namespace ecs;
 
-class GameObject
+struct HitPoints
 {
-  private:
-    f32 xpos;
-    f32 ypos;
-    Status status;
+  HitPoints(int _val) : hp(_val)
+  {
+  }
+  int hp;
+};
 
+// the id of the player to ally with
+struct Allegiance
+{
+  Allegiance(int _val) : alliedID(_val)
+  {
+  }
+  int alliedID;
+};
+
+struct Status
+{
+  Status(f32 x, f32 y) : xpos(x), ypos(y)
+  {
+  }
+  f32 xpos;
+  f32 ypos;
+  f32 stepSpeed = 5;
+  bool grabbed = false;
+};
+
+struct Drawable
+{
+  Drawable(GRRLIB_texImg *_ptexture) : ptexture(_ptexture)
+  {
+  }
+  GRRLIB_texImg *ptexture;
+  u32 color = 0xFFFFFFFF;
+};
+
+
+// estinations include the destination Vertex itself
+// as well as a path that leads to it, implemented
+// as a queue of pointers to vertices
+// The system that works with this component
+// usually tries to move an entity towards the next
+// vertex in the vector. 
+struct Path{
+  queue<shared_ptr<Vertex>> vertices;
+  f32 radius = 64;
+};
+
+class PathSystem : public System
+{
   public:
-    GameObject()
-    {
-    }
+    void update(float time) override;
+};
+
+class DrawingSystem : public System
+{
+public:
+  void update(float time) override;
 };

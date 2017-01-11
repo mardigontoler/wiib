@@ -17,33 +17,28 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <grrlib.h>
-#include <vector>
-#include <memory>
-#include <iostream>
-#include "properties.hpp"
-#include "GameObject.hpp"
-#include "ecs.h"
+#include <cmath>
+#include <tuple>
 
-using namespace std;
 
-class Player
-{
-  public:
-    unsigned int hp = 100; // player health. do fanfare and restart if 0
-    u32 crosscolor = 0xFFFFFFFF;
-    Player(int _x, int _y, GRRLIB_texImg *_crosshair) : xpos(_x),
-                                                        ypos(_y),
-                                                        crosshairtex(_crosshair)
-    {
-    }
+typedef float f32;
 
-    void draw(void);
-    void movex(double amount);
-    void movey(double amount);
+f32 distance(f32 x1, f32 y1, f32 x2, f32 y2){
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
 
-    f32 xpos;
-    f32 ypos;
-    GRRLIB_texImg *crosshairtex;
-    shared_ptr<Entity> grabbed;
-};
+// a unit vector in the direction of the line
+// between (x1, y1) and (x2, y2)
+// This is a gemoetric vector, not a container
+tuple<f32, f32> calcUnitVector(f32 x1, f32 y1, f32 x2, f32 y2){
+    f32 magnitude = distance(x1, y1, x2, y2);
+    f32 xcom = x2 - x1;
+    f32 ycom = y2 - y1;
+
+    // divide the x-component and y-component by magnitude
+    xcom /= magnitude;
+    ycom /= magnitude;
+
+    return make_tuple(xcom, ycom);
+
+}
