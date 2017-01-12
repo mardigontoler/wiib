@@ -1,5 +1,4 @@
 
-
 //Wiib - a Wii Homebrew multiplayer game
 //Copyright (C) 2017 Mardigon Toler
 
