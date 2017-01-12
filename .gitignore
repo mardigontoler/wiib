@@ -6,6 +6,7 @@ msys.bat.lnk
 *.dol
 *.elf
 *.exe
+*.ase
 ### /source/res/
 *.map
 /build/
