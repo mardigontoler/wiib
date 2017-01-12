@@ -77,7 +77,7 @@ struct Drawable
 // vertex in the vector. 
 struct Path{
   queue<shared_ptr<Vertex>> vertices;
-  f32 radius = 64;
+  f32 radius = 8;
 };
 
 class PathSystem : public System

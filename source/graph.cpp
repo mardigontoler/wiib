@@ -22,9 +22,12 @@
 #include <iostream>
 #include <stack>
 
+
+
 Graph::Graph(vector<double> &nodevector, vector<unsigned int> &nodeconnections)
 {
     // for loop increments by 2 at the end of each step
+    // ID's are assigned incrementally starting at 0
     unsigned int i;
     unsigned int idnum;
     for (i = 0, idnum = 0; i < nodevector.size(); i += 2, idnum++)
@@ -44,6 +47,7 @@ Graph::Graph(vector<double> &nodevector, vector<unsigned int> &nodeconnections)
 }
 
 
+
 // return a pointer from the vertex with the specified label
 shared_ptr<Vertex> Graph::getVertex(unsigned int _id)
 {
@@ -56,6 +60,8 @@ shared_ptr<Vertex> Graph::getVertex(unsigned int _id)
     }
     return nullptr;
 }
+
+
 
 // get a list of pointers to all the adjacent vertices to the vertex with
 // the specified id
@@ -75,6 +81,8 @@ vector<shared_ptr<Vertex>> Graph::getAdjTo(unsigned int _id)
     }
     return result; // should be empty if the id was invalid
 }
+
+
 
 // breadth first search to find the shortest path from id1 to id2
 void Graph::shortestPath(unsigned int id1)
@@ -146,6 +154,9 @@ void Graph::addConnection(unsigned int id1, unsigned int id2)
 {
     shared_ptr<Vertex> v1 = getVertex(id1);
     shared_ptr<Vertex> v2 = getVertex(id2);
-    v1->adjVerticesPtrs.push_back(v2);
-    v2->adjVerticesPtrs.push_back(v1);
+    
+    // the vertices should be sets, so we don't
+    // need to worry about duplicates
+    v1->adjVerticesPtrs.insert(v2);
+    v2->adjVerticesPtrs.insert(v1);
 }

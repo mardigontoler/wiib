@@ -18,7 +18,7 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <list>
+#include <set>
 #include <queue>
 
 using namespace std;
@@ -37,7 +37,7 @@ class Vertex
     double ypos;
     int parentid = -1; // resets a lot during the bfs algorithm
     bool visited = false; // distance value, gets reset a lot in the bfs algorithm
-    list<shared_ptr<Vertex>> adjVerticesPtrs;
+    set<shared_ptr<Vertex>> adjVerticesPtrs;
 };
 
 

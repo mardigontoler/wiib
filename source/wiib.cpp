@@ -186,7 +186,7 @@ class Wiib
         testent.add<Drawable>(crosshair1);
         testent.add<Path>();
         Path &p = testent.get<Path>();
-        p.vertices = g.getPath(0, 2);
+        p.vertices = g.getPath(0, 26);
         testent.add<Status>(200, 200);
 
         while (!finished)
