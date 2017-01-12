@@ -18,6 +18,7 @@
 #pragma once
 
 #define SPRITESIZE 32
+#define TILESIZE 32
 #define WINDOWWIDTH 640
 #define WINDOWHEIGHT 480
 #define CURSORSPEED 3
