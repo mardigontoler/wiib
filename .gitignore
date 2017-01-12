@@ -1,4 +1,5 @@
 msys.bat.lnk
+release/
 *.py
 *.hpp.gch
 *.a

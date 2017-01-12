@@ -42,6 +42,7 @@
 #include "res/circle.h"
 #include "res/font/VTfont.hpp"
 #include "res/tiles.h"
+#include "res/gentlesir.h"
 
 using namespace std;
 
@@ -57,7 +58,7 @@ class Wiib
 
     VTfont vtfont;
     GRRLIB_ttfFont *rawptrfont;
-    static MODPlay modplay2;
+    MODPlay gentlesirMOD;
 
     shared_ptr<Player> player1;
     shared_ptr<Player> player2;
@@ -102,6 +103,11 @@ class Wiib
         crosshair1 = GRRLIB_LoadTexture(circle);
         player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
         player2.reset(new Player(80, 80, crosshair1));
+        // init audio
+        AESND_Init();
+        MODPlay_Init(&gentlesirMOD);
+        MODPlay_SetMOD(&gentlesirMOD, gentlesir);
+        MODPlay_Start(&gentlesirMOD);
     }
 
     void playState(void)
@@ -164,14 +170,11 @@ class Wiib
         // For some reason, the font won't load correctly in the constructor, so load it here
         rawptrfont = GRRLIB_LoadTTF(vtfont.data, vtfont.size);
 
-        // init audio
-        AESND_Init();
-
         sstack.pushState(menulambda);
 
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
 
-        #include "res/testMapNodes.hpp"
+#include "res/testMapNodes.hpp"
         Graph g(nodes1, nodeConnections1);
 
         static char buffer[255]; // temporary buffer used for printing
@@ -202,8 +205,8 @@ class Wiib
             {
                 j = i / level1width;
                 GRRLIB_DrawTile((i % level1width) * 32,
-                     j * 32,
-                     tilestexture, 0, 1, 1, 0xFFFFFFFF, level1data[i] - 1);
+                                j * 32,
+                                tilestexture, 0, 1, 1, 0xFFFFFFFF, level1data[i] - 1);
             }
             sstack.top()();
             // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
