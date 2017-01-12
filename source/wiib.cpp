@@ -35,13 +35,13 @@
 #include "graph.hpp"
 #include <memory>
 #include "properties.hpp"
-
 #include "ecs.h"
 
 // resource files converted to arrays adfasdf
 #include "res/wiiblogo.h"
 #include "res/circle.h"
 #include "res/font/VTfont.hpp"
+#include "res/tiles.h"
 
 using namespace std;
 
@@ -53,6 +53,7 @@ class Wiib
     vector<GRRLIB_texImg *> texPointers;
     GRRLIB_texImg *menutexture;
     GRRLIB_texImg *crosshair1;
+    GRRLIB_texImg *tilestexture;
 
     VTfont vtfont;
     GRRLIB_ttfFont *rawptrfont;
@@ -97,6 +98,7 @@ class Wiib
     {
         // try to load up sprite textures and the font
         menutexture = registerTexture(wiiblogo);
+        tilestexture = registerTexture(tiles);
         crosshair1 = GRRLIB_LoadTexture(circle);
         player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
         player2.reset(new Player(80, 80, crosshair1));
@@ -127,16 +129,16 @@ class Wiib
         player2->draw();
 
         playSystems.update(0);
-
     }
 
     void pauseState(void)
     {
     }
 
-    void exitState(void){
+    void exitState(void)
+    {
+        finished = true;
     }
-
 
     void fanfareState(void)
     {
@@ -157,6 +159,7 @@ class Wiib
         // Initialise the Wiimotes
         WPAD_Init();
         WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
+        GRRLIB_InitTileSet(tilestexture, 32, 32, 0);
 
         // For some reason, the font won't load correctly in the constructor, so load it here
         rawptrfont = GRRLIB_LoadTTF(vtfont.data, vtfont.size);
@@ -172,7 +175,7 @@ class Wiib
         Graph g(nodes1, nodeConnections1);
 
         static char buffer[255]; // temporary buffer used for printing
-        
+
         // systems need to be added to the manager for
         // their update to work
         playSystems.add<DrawingSystem>();
@@ -182,11 +185,11 @@ class Wiib
         testent.add<HitPoints>(100);
         testent.add<Drawable>(crosshair1);
         testent.add<Path>();
-        Path& p = testent.get<Path>();
+        Path &p = testent.get<Path>();
         p.vertices = g.getPath(0, 2);
         testent.add<Status>(200, 200);
 
-        while (true)
+        while (!finished)
         {
             WPAD_ScanPads(); // Scan the Wiimotes
             // If [HOME] was pressed on the first Wiimote, break out of the loop
@@ -194,8 +197,16 @@ class Wiib
                 sstack.pushState(exitlambda);
 
             GRRLIB_FillScreen(GRRLIB_BLACK);
-
+            unsigned int j = 0;
+            for (unsigned int i = 0; i < level1data.size(); i++)
+            {
+                j = i / level1width;
+                GRRLIB_DrawTile((i % level1width) * 32,
+                     j * 32,
+                     tilestexture, 0, 1, 1, 0xFFFFFFFF, level1data[i] - 1);
+            }
             sstack.top()();
+            // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
             //Allegiance& alleg = testent.get<Allegiance>();
             //sprintf(buffer, "%d  ", alleg.alliedID);
             //GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
