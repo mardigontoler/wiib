@@ -58,6 +58,10 @@ class Graph
     //coordinates of each node.
     Graph(vector<double> &nodevector, vector<unsigned int> &nodeconnections);
 
+    // iterate through the vertices and look for the one
+    // with least distance from the input coordinates
+    shared_ptr<Vertex> getNearestVertex(double x, double y);
+
     void addVertex(shared_ptr<Vertex> v);
 
     // adds connections from id1 to id2 and also from id2 to id1

@@ -16,6 +16,7 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "graph.hpp"
+#include "misc.hpp"
 #include <queue>
 #include <list>
 #include <memory>
@@ -46,6 +47,19 @@ Graph::Graph(vector<double> &nodevector, vector<unsigned int> &nodeconnections)
     }
 }
 
+
+shared_ptr<Vertex> Graph::getNearestVertex(double x, double y){
+    shared_ptr<Vertex> result = nullptr;
+    f32 currentDist = -1;
+    for(shared_ptr<Vertex> vert : vertices){
+        if(result == nullptr)result = vert;
+        f32 vertDist = calcDistance(vert->xpos, vert->ypos, x, y);
+        if(vertDist < currentDist)result = vert;
+        currentDist = vertDist;
+
+    }
+    return result;
+}
 
 
 // return a pointer from the vertex with the specified label

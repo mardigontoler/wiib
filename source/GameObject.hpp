@@ -76,6 +76,7 @@ struct Drawable
 // usually tries to move an entity towards the next
 // vertex in the vector. 
 struct Path{
+  shared_ptr<Vertex> nearestVert;
   queue<shared_ptr<Vertex>> vertices;
   f32 radius = 8;
 };
@@ -85,6 +86,7 @@ class PathSystem : public System
   public:
     void update(float time) override;
 };
+
 
 class DrawingSystem : public System
 {

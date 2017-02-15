@@ -42,6 +42,7 @@
 #include "res/font/VTfont.hpp"
 #include "res/tiles.h"
 #include "res/gentlesir.h"
+#include "res/testMapNodes.hpp"
 
 using namespace std;
 
@@ -64,6 +65,7 @@ class Wiib
 
     ecs::EntityManager entities;
     ecs::SystemManager playSystems;
+    Graph g;
 
     // using lambdas makes it easier to implement the stack of member methods
     function<void()> menulambda = [this] { menuState(); };
@@ -94,7 +96,8 @@ class Wiib
         }
     }
 
-    Wiib() : playSystems(entities)
+    Wiib() : playSystems(entities),
+             g(nodes1, nodeConnections1)
     {
         // try to load up sprite textures and the font
         menutexture = registerTexture(wiiblogo);
@@ -112,6 +115,7 @@ class Wiib
     void playState(void)
     {
         u32 p1held = WPAD_ButtonsHeld(0);
+        u32 p1pressed = WPAD_ButtonsDown(0);
         if (p1held & WPAD_BUTTON_DOWN)
         {
             player1->movex(CURSORSPEED);
@@ -127,6 +131,12 @@ class Wiib
         if (p1held & WPAD_BUTTON_LEFT)
         {
             player1->movey(CURSORSPEED);
+        }
+        if(p1held & WPAD_BUTTON_A){
+            f32 x, y;
+            x = player1->xpos;
+            y = player1->ypos;
+
         }
 
         // drawing game entities
@@ -157,6 +167,23 @@ class Wiib
         }
     }
 
+
+    // a 2D array is faked with a 1D array using and
+    // modulus with the intended width of the 2D array
+    void renderTiles(GRRLIB_texImg* tilemap, vector<int>& tileIndices, int width)
+    {
+        unsigned int j = 0;
+        unsigned int i = 0;
+        for (; i < tileIndices.size(); i++)
+        {
+            j = i / width; // we use integer division for the vertical position
+            // we use the remainder of this division for the horizontal position
+            GRRLIB_DrawTile((i % width) * 32,
+                            j * 32,
+                            tilemap, 0, 1, 1, 0xFFFFFFFF, tileIndices[i] - 1);
+        }
+    }
+
     void run(void)
     {
         // Initialise the Graphics & Video subsystem
@@ -172,9 +199,6 @@ class Wiib
         sstack.pushState(menulambda);
 
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
-
-#include "res/testMapNodes.hpp"
-        Graph g(nodes1, nodeConnections1);
 
         static char buffer[255]; // temporary buffer used for printing
 
@@ -199,14 +223,7 @@ class Wiib
                 sstack.pushState(exitlambda);
 
             GRRLIB_FillScreen(GRRLIB_BLACK);
-            unsigned int j = 0;
-            for (unsigned int i = 0; i < level1data.size(); i++)
-            {
-                j = i / level1width;
-                GRRLIB_DrawTile((i % level1width) * 32,
-                                j * 32,
-                                tilestexture, 0, 1, 1, 0xFFFFFFFF, level1data[i] - 1);
-            }
+
             sstack.top()();
             // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
             //Allegiance& alleg = testent.get<Allegiance>();

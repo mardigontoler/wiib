@@ -48,12 +48,15 @@ void PathSystem::update(float time)
             shared_ptr<Vertex> currentDest = path.vertices.front();
             if (currentDest != nullptr)
             {
-                if (distance(status.xpos, status.ypos,
+                if (calcDistance(status.xpos, status.ypos,
                              currentDest->xpos, currentDest->ypos) < path.radius)
                 {
                     // we reached our destination
                     // we don't want to move towards
                     // this vertex anymore, so dequeue it
+                    // Also, this vertex will now be the one that
+                    // the entity is currently at
+                    path.nearestVert = currentDest;
                     path.vertices.pop();
                 }
                 else
