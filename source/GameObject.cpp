@@ -21,6 +21,7 @@
 #include "ecs.h"
 #include "misc.hpp"
 #include <memory>
+#include <wiiuse/wpad.h>
 
 f32 x;
 
@@ -73,5 +74,24 @@ void PathSystem::update(float time)
                 }
             }
         }
+    }
+}
+
+
+
+void InputSystem::update(float time){
+    for(auto entity : entities().with<Path, Allegiance>()){
+        Allegiance& alleg = entity.get<Allegiance>();
+        u32 aPress;
+        // if player 1 or player 2
+        if(alleg.alliedID == 1){
+            aPress = WPAD_ButtonsDown(0); // controller 1
+        }
+        else if(alleg.alliedID == 2){
+            aPress = WPAD_ButtonsDown(1); // controller 2
+        }
+        // the previous statements ensure that the following only occurs
+        // if the button press event came from the entity's actual user
+        
     }
 }

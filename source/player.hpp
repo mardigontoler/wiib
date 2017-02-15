@@ -32,9 +32,10 @@ class Player
   public:
     unsigned int hp = 100; // player health. do fanfare and restart if 0
     u32 crosscolor = 0xFFFFFFFF;
-    Player(int _x, int _y, GRRLIB_texImg *_crosshair) : xpos(_x),
+    Player(int _x, int _y, int _id, GRRLIB_texImg *_crosshair) : xpos(_x),
                                                         ypos(_y),
-                                                        crosshairtex(_crosshair)
+                                                        crosshairtex(_crosshair),
+                                                        id(_id)
     {
     }
 
@@ -44,6 +45,7 @@ class Player
 
     f32 xpos;
     f32 ypos;
+    int id;
     GRRLIB_texImg *crosshairtex;
     shared_ptr<Entity> grabbed;
 };

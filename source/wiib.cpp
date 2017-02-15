@@ -105,8 +105,15 @@ class Wiib
         menutexture = registerTexture(wiiblogo);
         tilestexture = registerTexture(tiles);
         crosshair1 = GRRLIB_LoadTexture(circle);
-        player1.reset(new Player(10, 10, crosshair1)); // resetting shared_ptr
-        player2.reset(new Player(80, 80, crosshair1));
+        
+        player1.reset(new Player(10, 10, 1, crosshair1)); // resetting shared_ptr
+        player2.reset(new Player(80, 80, 2, crosshair1));
+
+        // we need toregister the graph as an entity send_oob
+        // systems can get at it
+        ecs::Entity graphEnt = entities.create();
+        // graphEnt.add<Graph>(g);
+
         // init audio
         AESND_Init();
         MODPlay_Init(&gentlesirMOD);
@@ -139,14 +146,14 @@ class Wiib
             x = player1->xpos;
             y = player1->ypos;
             for(auto entity : entities.with<Path,HitPoints>()){
-                shared_ptr<Vertex> closeVert = g.getNearestVertex(x,y);
-                Path &p = entity.get<Path>();
-                unsigned int id1, id2;
-                id1 = p.nearestVertID;
-                id2 = closeVert->id;
-                g.shortestPath(id1);
-                p.vertices = g.getPath(id1, id2);
-                sprintf(buffer, "%d  ", id2);
+                // shared_ptr<Vertex> closeVert = g.getNearestVertex(x,y);
+                // Path &p = entity.get<Path>();
+                // unsigned int id1, id2;
+                // id1 = p.nearestVertID;
+                // id2 = closeVert->id;
+                // g.shortestPath(id1);
+                // p.vertices = g.getPath(id1, id2);
+                // sprintf(buffer, "%d  ", id2);
             }
         }
 
@@ -216,11 +223,13 @@ class Wiib
         // their update to work
         playSystems.add<DrawingSystem>();
         playSystems.add<PathSystem>();
+        playSystems.add<InputSystem>();
 
         ecs::Entity testent = entities.create();
         testent.add<HitPoints>(100);
         testent.add<Drawable>(crosshair1);
         testent.add<Path>();
+        testent.add<Allegiance>(1);
         Path &p = testent.get<Path>();
         p.vertices = g.getPath(0, 26);
         testent.add<Status>(200, 200);

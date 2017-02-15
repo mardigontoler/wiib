@@ -93,3 +93,9 @@ class DrawingSystem : public System
 public:
   void update(float time) override;
 };
+
+class InputSystem : public System
+{
+  public:
+    void update(float time) override;
+};
