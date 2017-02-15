@@ -56,7 +56,7 @@ void PathSystem::update(float time)
                     // this vertex anymore, so dequeue it
                     // Also, this vertex will now be the one that
                     // the entity is currently at
-                    path.nearestVert = currentDest;
+                    path.nearestVertID = currentDest->id;
                     path.vertices.pop();
                 }
                 else

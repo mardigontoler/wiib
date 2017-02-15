@@ -52,11 +52,16 @@ shared_ptr<Vertex> Graph::getNearestVertex(double x, double y){
     shared_ptr<Vertex> result = nullptr;
     f32 currentDist = -1;
     for(shared_ptr<Vertex> vert : vertices){
-        if(result == nullptr)result = vert;
         f32 vertDist = calcDistance(vert->xpos, vert->ypos, x, y);
-        if(vertDist < currentDist)result = vert;
-        currentDist = vertDist;
-
+        if(result == nullptr){
+            result = vert;
+            currentDist = vertDist;
+        }
+        if(vertDist < currentDist)
+        {
+            result = vert;
+            currentDist = vertDist;
+        }
     }
     return result;
 }
@@ -98,7 +103,8 @@ vector<shared_ptr<Vertex>> Graph::getAdjTo(unsigned int _id)
 
 
 
-// breadth first search to find the shortest path from id1 to id2
+// breadth first search to find the shortest path from id1 to 
+// all other vertices
 void Graph::shortestPath(unsigned int id1)
 {
     for (shared_ptr<Vertex> vert : vertices)

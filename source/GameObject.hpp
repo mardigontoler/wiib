@@ -76,7 +76,7 @@ struct Drawable
 // usually tries to move an entity towards the next
 // vertex in the vector. 
 struct Path{
-  shared_ptr<Vertex> nearestVert;
+  unsigned int nearestVertID;
   queue<shared_ptr<Vertex>> vertices;
   f32 radius = 8;
 };

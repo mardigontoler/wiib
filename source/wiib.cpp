@@ -46,6 +46,8 @@
 
 using namespace std;
 
+char buffer[255]; // temporary buffer used for printing
+
 class Wiib
 {
   private:
@@ -132,14 +134,24 @@ class Wiib
         {
             player1->movey(CURSORSPEED);
         }
-        if(p1held & WPAD_BUTTON_A){
+        if(p1pressed & WPAD_BUTTON_A){
             f32 x, y;
             x = player1->xpos;
             y = player1->ypos;
-
+            for(auto entity : entities.with<Path,HitPoints>()){
+                shared_ptr<Vertex> closeVert = g.getNearestVertex(x,y);
+                Path &p = entity.get<Path>();
+                unsigned int id1, id2;
+                id1 = p.nearestVertID;
+                id2 = closeVert->id;
+                g.shortestPath(id1);
+                p.vertices = g.getPath(id1, id2);
+                sprintf(buffer, "%d  ", id2);
+            }
         }
 
         // drawing game entities
+        renderTiles(tilestexture, level1data, level1width);
         player1->draw();
         player2->draw();
 
@@ -168,7 +180,7 @@ class Wiib
     }
 
 
-    // a 2D array is faked with a 1D array using and
+    // a 2D array is faked with a 1D array using division and
     // modulus with the intended width of the 2D array
     void renderTiles(GRRLIB_texImg* tilemap, vector<int>& tileIndices, int width)
     {
@@ -200,8 +212,6 @@ class Wiib
 
         GRRLIB_SetBackgroundColour(20, 20, 20, 255);
 
-        static char buffer[255]; // temporary buffer used for printing
-
         // systems need to be added to the manager for
         // their update to work
         playSystems.add<DrawingSystem>();
@@ -228,7 +238,7 @@ class Wiib
             // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
             //Allegiance& alleg = testent.get<Allegiance>();
             //sprintf(buffer, "%d  ", alleg.alliedID);
-            //GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
+            GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }
         freeAllTextures();
