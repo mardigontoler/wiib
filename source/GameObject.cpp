@@ -22,6 +22,10 @@
 #include "misc.hpp"
 #include <memory>
 #include <wiiuse/wpad.h>
+#include <ctime>
+#include <cstdlib>
+#include "player.hpp"
+#include "properties.hpp"
 
 f32 x;
 
@@ -80,18 +84,67 @@ void PathSystem::update(float time)
 
 
 void InputSystem::update(float time){
-    for(auto entity : entities().with<Path, Allegiance>()){
-        Allegiance& alleg = entity.get<Allegiance>();
-        u32 aPress;
-        // if player 1 or player 2
-        if(alleg.alliedID == 1){
-            aPress = WPAD_ButtonsDown(0); // controller 1
-        }
-        else if(alleg.alliedID == 2){
-            aPress = WPAD_ButtonsDown(1); // controller 2
-        }
-        // the previous statements ensure that the following only occurs
-        // if the button press event came from the entity's actual user
+    static shared_ptr<Graph> gptr;
+    // get a handle on the graph with a pointer entity
+    for(auto graphEntity : entities().with<GraphPointer>()){
+        GraphPointer &graphpoint = graphEntity.get<GraphPointer>();
+        gptr = graphpoint.gptr;
+    }
+
+    for(auto playerEntity : entities().with<Player>()){
+        // One iteration for each player
         
+        Player &player = playerEntity.get<Player>();
+        u32 held;
+        u32 pressed;
+        int playerid = player.id;
+        if(player.id == 1){
+            held = WPAD_ButtonsHeld(0);
+            pressed = WPAD_ButtonsDown(0);
+        }
+        if(player.id == 2){
+            held = WPAD_ButtonsHeld(1);
+            pressed = WPAD_ButtonsDown(1);
+        }
+        if(held & WPAD_BUTTON_DOWN){
+            player.movey(CURSORSPEED);
+        }
+        if(held & WPAD_BUTTON_UP){
+            player.movey(-CURSORSPEED);
+        }
+        if(held & WPAD_BUTTON_LEFT){
+            player.movex(-CURSORSPEED);
+        }
+        if(held & WPAD_BUTTON_RIGHT){
+            player.movex(CURSORSPEED);
+        }
+        if(pressed & WPAD_BUTTON_A){
+            // player 1 or player 2 has pressed A
+            // iterate through the minions but select the
+            // appropriately allied ones
+            for(auto minionEntity : entities().with<Path, Allegiance>()){
+                Allegiance& alleg = minionEntity.get<Allegiance>();
+                if(alleg.alliedID == playerid){
+                    // When a player presses A, 1/4 of the available units
+            	    // should start moving towards it.
+                	// So, here we will perform the random selection on the fly
+                    if(rand() % 4 == 0){
+                        // determine the vertex nearest to the player's cursor
+                        shared_ptr<Vertex> closeVert = gptr->getNearestVertex(player.xpos, player.ypos);
+                        Path &p = minionEntity.get<Path>();
+                        unsigned int id1, id2; //vertex ID's
+                        id1 = p.nearestVertID;
+                        id2 = closeVert->id;
+                        //perform path algorithm. 
+                        gptr->shortestPath(id1);
+                        // now that the algorithm is finished, figure out
+                        // the vertices in it and give them to the entity to follow
+                        p.vertices = gptr->getPath(id1, id2);
+                    }
+
+                }
+            }
+        }
     }
 }
+

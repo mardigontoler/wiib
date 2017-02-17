@@ -69,7 +69,15 @@ struct Drawable
 };
 
 
-// estinations include the destination Vertex itself
+// Make a component that simply stores a smart pointer
+// to the current graph, so that systems can see the graph
+struct GraphPointer{
+    shared_ptr<Graph> gptr;
+};
+
+
+
+// estimations include the destination Vertex itself
 // as well as a path that leads to it, implemented
 // as a queue of pointers to vertices
 // The system that works with this component
@@ -86,6 +94,9 @@ class PathSystem : public System
   public:
     void update(float time) override;
 };
+
+
+
 
 
 class DrawingSystem : public System

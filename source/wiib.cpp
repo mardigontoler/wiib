@@ -17,6 +17,7 @@
 
 #include <grrlib.h>
 #include <stdlib.h>
+#include <cstdlib>
 #include <cstdio>
 #include <wiiuse/wpad.h>
 #include <stdio.h>
@@ -36,7 +37,7 @@
 #include "properties.hpp"
 #include "ecs.h"
 
-// resource files converted to arrays adfasdf
+// resource files converted to arrays
 #include "res/wiiblogo.h"
 #include "res/circle.h"
 #include "res/font/VTfont.hpp"
@@ -46,7 +47,7 @@
 
 using namespace std;
 
-char buffer[255]; // temporary buffer used for printing
+char buffer[256]; // temporary buffer used for printing
 
 class Wiib
 {
@@ -65,9 +66,10 @@ class Wiib
     shared_ptr<Player> player1;
     shared_ptr<Player> player2;
 
+    shared_ptr<Graph> graphptr;
+
     ecs::EntityManager entities;
     ecs::SystemManager playSystems;
-    Graph g;
 
     // using lambdas makes it easier to implement the stack of member methods
     function<void()> menulambda = [this] { menuState(); };
@@ -98,8 +100,7 @@ class Wiib
         }
     }
 
-    Wiib() : playSystems(entities),
-             g(nodes1, nodeConnections1)
+    Wiib() : playSystems(entities)
     {
         // try to load up sprite textures and the font
         menutexture = registerTexture(wiiblogo);
@@ -108,11 +109,8 @@ class Wiib
         
         player1.reset(new Player(10, 10, 1, crosshair1)); // resetting shared_ptr
         player2.reset(new Player(80, 80, 2, crosshair1));
+        graphptr.reset(new Graph(nodes1, nodeConnections1));
 
-        // we need toregister the graph as an entity send_oob
-        // systems can get at it
-        ecs::Entity graphEnt = entities.create();
-        // graphEnt.add<Graph>(g);
 
         // init audio
         AESND_Init();
@@ -123,29 +121,7 @@ class Wiib
 
     void playState(void)
     {
-        u32 p1held = WPAD_ButtonsHeld(0);
-        u32 p1pressed = WPAD_ButtonsDown(0);
-        if (p1held & WPAD_BUTTON_DOWN)
-        {
-            player1->movex(CURSORSPEED);
-        }
-        if (p1held & WPAD_BUTTON_UP)
-        {
-            player1->movex(-CURSORSPEED);
-        }
-        if (p1held & WPAD_BUTTON_RIGHT)
-        {
-            player1->movey(-CURSORSPEED);
-        }
-        if (p1held & WPAD_BUTTON_LEFT)
-        {
-            player1->movey(CURSORSPEED);
-        }
-        if(p1pressed & WPAD_BUTTON_A){
-            f32 x, y;
-            x = player1->xpos;
-            y = player1->ypos;
-            for(auto entity : entities.with<Path,HitPoints>()){
+            //for(auto entity : entities.with<Path,HitPoints>()){
                 // shared_ptr<Vertex> closeVert = g.getNearestVertex(x,y);
                 // Path &p = entity.get<Path>();
                 // unsigned int id1, id2;
@@ -154,8 +130,6 @@ class Wiib
                 // g.shortestPath(id1);
                 // p.vertices = g.getPath(id1, id2);
                 // sprintf(buffer, "%d  ", id2);
-            }
-        }
 
         // drawing game entities
         renderTiles(tilestexture, level1data, level1width);
@@ -231,8 +205,13 @@ class Wiib
         testent.add<Path>();
         testent.add<Allegiance>(1);
         Path &p = testent.get<Path>();
-        p.vertices = g.getPath(0, 26);
+        p.vertices = graphptr->getPath(0, 26);
         testent.add<Status>(200, 200);
+
+        // we need toregister the graph as an entity so that
+        // systems can get at it
+        ecs::Entity graphEnt = entities.create();
+        graphEnt.add<GraphPointer>(graphptr);
 
         while (!finished)
         {
@@ -260,7 +239,7 @@ class Wiib
 
 int main(int argc, char **argv)
 {
-
+    srand(time(0)); // seed rng
     Wiib game;
     game.run();
 }
