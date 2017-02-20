@@ -91,32 +91,35 @@ void InputSystem::update(float time){
         gptr = graphpoint.gptr;
     }
 
-    for(auto playerEntity : entities().with<Player>()){
+    for(auto playerEntity : entities().with<PlayerPtrComp>()){
         // One iteration for each player
         
-        Player &player = playerEntity.get<Player>();
-        u32 held;
-        u32 pressed;
-        int playerid = player.id;
-        if(player.id == 1){
+        PlayerPtrComp &playerComp = playerEntity.get<PlayerPtrComp>();
+        shared_ptr<Player> player = playerComp.pptr;
+        u32 held = 0;
+        u32 pressed = 0;
+        int playerid = player->id;
+        if(player->id == 1){
             held = WPAD_ButtonsHeld(0);
             pressed = WPAD_ButtonsDown(0);
         }
-        if(player.id == 2){
+        if(player->id == 2){
             held = WPAD_ButtonsHeld(1);
             pressed = WPAD_ButtonsDown(1);
         }
+
+
         if(held & WPAD_BUTTON_DOWN){
-            player.movey(CURSORSPEED);
+            player->movey(CURSORSPEED);
         }
         if(held & WPAD_BUTTON_UP){
-            player.movey(-CURSORSPEED);
+            player->movey(-CURSORSPEED);
         }
         if(held & WPAD_BUTTON_LEFT){
-            player.movex(-CURSORSPEED);
+            player->movex(-CURSORSPEED);
         }
         if(held & WPAD_BUTTON_RIGHT){
-            player.movex(CURSORSPEED);
+            player->movex(CURSORSPEED);
         }
         if(pressed & WPAD_BUTTON_A){
             // player 1 or player 2 has pressed A
@@ -124,13 +127,13 @@ void InputSystem::update(float time){
             // appropriately allied ones
             for(auto minionEntity : entities().with<Path, Allegiance>()){
                 Allegiance& alleg = minionEntity.get<Allegiance>();
-                if(alleg.alliedID == playerid){
+                //if(alleg.alliedID == playerid){
                     // When a player presses A, 1/4 of the available units
             	    // should start moving towards it.
                 	// So, here we will perform the random selection on the fly
-                    if(rand() % 4 == 0){
+                    //if(rand() % 4 == 0){
                         // determine the vertex nearest to the player's cursor
-                        shared_ptr<Vertex> closeVert = gptr->getNearestVertex(player.xpos, player.ypos);
+                        shared_ptr<Vertex> closeVert = gptr->getNearestVertex(player->xpos, player->ypos);
                         Path &p = minionEntity.get<Path>();
                         unsigned int id1, id2; //vertex ID's
                         id1 = p.nearestVertID;
@@ -140,9 +143,8 @@ void InputSystem::update(float time){
                         // now that the algorithm is finished, figure out
                         // the vertices in it and give them to the entity to follow
                         p.vertices = gptr->getPath(id1, id2);
-                    }
-
-                }
+                   // }
+               // }
             }
         }
     }

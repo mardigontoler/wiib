@@ -80,7 +80,7 @@ class Wiib
 
   public:
     //create a stack that's used to control the state of the game
-    //the top item can be the menu, the game, or pause
+    //the top item can be the menu, the game, or pause, etc..
     stateStack sstack;
 
     // this needs to be called before a texture is used in sprites and stuff
@@ -199,6 +199,14 @@ class Wiib
         playSystems.add<PathSystem>();
         playSystems.add<InputSystem>();
 
+        // create Player Entities out of the pointers to
+        // the player objects
+        ecs::Entity p1ent = entities.create();
+        ecs::Entity p2ent = entities.create();
+        p1ent.add<PlayerPtrComp>(player1);
+        p2ent.add<PlayerPtrComp>(player2);
+
+
         ecs::Entity testent = entities.create();
         testent.add<HitPoints>(100);
         testent.add<Drawable>(crosshair1);
@@ -208,7 +216,7 @@ class Wiib
         p.vertices = graphptr->getPath(0, 26);
         testent.add<Status>(200, 200);
 
-        // we need toregister the graph as an entity so that
+        // we need to register the graph as an entity so that
         // systems can get at it
         ecs::Entity graphEnt = entities.create();
         graphEnt.add<GraphPointer>(graphptr);

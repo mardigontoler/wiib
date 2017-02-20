@@ -24,7 +24,6 @@
 #include "GameObject.hpp"
 #include "ecs.h"
 
-using namespace std;
 
 class Player
 {
@@ -48,3 +47,10 @@ class Player
     GRRLIB_texImg *crosshairtex;
     shared_ptr<Entity> grabbed;
 };
+
+// A component that lets systems access the players
+struct PlayerPtrComp{
+        shared_ptr<Player> pptr;
+};
+
+
