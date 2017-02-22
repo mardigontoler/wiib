@@ -26,4 +26,6 @@ using std::tuple;
 
 f32 calcDistance(f32 x1, f32 y1, f32 x2, f32 y2);
 
+tuple<f32, f32> noise(f32 min, f32 max);
+
 tuple<f32, f32> calcUnitVector(f32 x1, f32 y1, f32 x2, f32 y2);

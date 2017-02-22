@@ -177,7 +177,8 @@ class Wiib
         WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
         GRRLIB_InitTileSet(tilestexture, 32, 32, 0);
 
-        // For some reason, the font won't load correctly in the constructor, so load it here
+        // For some reason, the font won't load correctly in the 
+        // constructor, so load it here
         rawptrfont = GRRLIB_LoadTTF(vtfont.data, vtfont.size);
 
         sstack.pushState(menulambda);
@@ -198,23 +199,24 @@ class Wiib
         p2ent.add<PlayerPtrComp>(player2);
 
 
-        ecs::Entity testent = entities.create();
-        testent.add<HitPoints>(100);
-        testent.add<Drawable>(crosshair1);
-        testent.add<Path>();
-        testent.add<Allegiance>(1);
-        Path &p = testent.get<Path>();
-        p.vertices = graphptr->getPath(0, 26);
-        testent.add<Status>(200, 200);
-
+        for(int i = 0; i < 10; i ++){
+            ecs::Entity testent = entities.create();
+            testent.add<HitPoints>(100);
+            testent.add<Drawable>(crosshair1);
+            testent.add<Path>();
+            testent.add<Allegiance>(1);
+            testent.add<Status>(50 + 32 * i, 200);
+        }
         // we need to register the graph as an entity so that
         // systems can get at it
         ecs::Entity graphEnt = entities.create();
         graphEnt.add<GraphPointer>(graphptr);
 
+
         while (!finished)
         {
             WPAD_ScanPads(); // Scan the Wiimotes
+
             // If [HOME] was pressed on the first Wiimote, break out of the loop
             if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)
                 sstack.pushState(exitlambda);
@@ -224,7 +226,7 @@ class Wiib
             sstack.top()();
             // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
             //Allegiance& alleg = testent.get<Allegiance>();
-            //sprintf(buffer, "%d  ", alleg.alliedID);
+            sprintf(buffer, "%d  ", rand() % 2);
             GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
         }
@@ -242,3 +244,5 @@ int main(int argc, char **argv)
     Wiib game;
     game.run();
 }
+
+

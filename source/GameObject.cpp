@@ -22,9 +22,9 @@
 #include <memory>
 #include <wiiuse/wpad.h>
 #include <ctime>
-#include <cstdlib>
 #include "player.hpp"
 #include "properties.hpp"
+#include <cstdlib>
 
 f32 x;
 
@@ -69,7 +69,8 @@ void PathSystem::update(float time)
                     // the next vertex, so find from the entity
                     // to the vertex at the front of the queue
                     unitVect = calcUnitVector(status.xpos, status.ypos,
-                                              currentDest->xpos, currentDest->ypos);
+                                              currentDest->xpos + status.xnoise,
+                                              currentDest->ypos + status.ynoise);
                     xcomp = get<0>(unitVect);
                     ycomp = get<1>(unitVect);
                     status.xpos += xcomp;
@@ -83,7 +84,7 @@ void PathSystem::update(float time)
 
 
 void InputSystem::update(float time){
-    static shared_ptr<Graph> gptr;
+    shared_ptr<Graph> gptr;
     // get a handle on the graph with a pointer entity
     for(auto graphEntity : entities().with<GraphPointer>()){
         GraphPointer &graphpoint = graphEntity.get<GraphPointer>();
@@ -131,7 +132,7 @@ void InputSystem::update(float time){
                     // When a player presses A, 1/4 of the available units
             	    // should start moving towards it.
                 	// So, here we will perform the random selection on the fly
-                    if(rand() % 4 == 0){
+                    if(rand() % 4 == 1){
                         // determine the vertex nearest to the player's cursor
                         shared_ptr<Vertex> destVert = gptr->getNearestVertex(player->xpos, player->ypos);
                         Path &p = minionEntity.get<Path>();
@@ -192,7 +193,8 @@ void InputSystem::update(float time){
                             }
 
                         }
-                        p.vertices = chosenPath;
+                        p.vertices = chosenPath; // set to result of algorithm
+                        // also, give the status some noise for positioning
                     }
                 }
             }

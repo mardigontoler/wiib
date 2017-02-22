@@ -53,8 +53,7 @@ struct Status
   Status(f32 x, f32 y) : xpos(x), ypos(y)
   {
   }
-  f32 xpos;
-  f32 ypos;
+  f32 xpos, ypos, xnoise, ynoise;
   f32 stepSpeed = 5;
   bool grabbed = false;
 };
