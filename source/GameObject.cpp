@@ -136,7 +136,10 @@ void InputSystem::update(float time){
                         shared_ptr<Vertex> destVert = gptr->getNearestVertex(player->xpos, player->ypos);
                         Path &p = minionEntity.get<Path>();
                         unsigned int originID, nextID, destID; //vertex ID's
-                        shared_ptr<Vertex> nextPtr = p.vertices.front(); // might be null
+                        shared_ptr<Vertex> nextPtr = nullptr;
+                        if(p.vertices.size() > 0){
+                            nextPtr = p.vertices.front();
+                        }
                         originID = p.nearestVertID;
                         nextID =  nextPtr->id;
                         destID = destVert->id;
@@ -156,7 +159,7 @@ void InputSystem::update(float time){
 
                             // Then, choose the option with the fewest edges.
                             // If they have the same number of edges, choose the
-                            // option with the least distance from the entity
+                            // option with the least physical distance from the entity
                             queue<Vertex>::size_type lenFromOrigin = pathFromOrigin.size();
                             queue<Vertex>::size_type lenFromNext = pathFromNext.size();
 
