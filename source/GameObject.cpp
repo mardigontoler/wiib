@@ -1,5 +1,4 @@
 
-
 //Wiib - a Wii Homebrew multiplayer game
 //Copyright (C) 2017 Mardigon Toler
 
@@ -121,30 +120,78 @@ void InputSystem::update(float time){
         if(held & WPAD_BUTTON_RIGHT){
             player->movex(CURSORSPEED);
         }
+
         if(pressed & WPAD_BUTTON_A){
             // player 1 or player 2 has pressed A
             // iterate through the minions but select the
             // appropriately allied ones
             for(auto minionEntity : entities().with<Path, Allegiance>()){
                 Allegiance& alleg = minionEntity.get<Allegiance>();
-                //if(alleg.alliedID == playerid){
+                if(alleg.alliedID == playerid){
                     // When a player presses A, 1/4 of the available units
             	    // should start moving towards it.
                 	// So, here we will perform the random selection on the fly
-                    //if(rand() % 4 == 0){
+                    if(rand() % 4 == 0){
                         // determine the vertex nearest to the player's cursor
-                        shared_ptr<Vertex> closeVert = gptr->getNearestVertex(player->xpos, player->ypos);
+                        shared_ptr<Vertex> destVert = gptr->getNearestVertex(player->xpos, player->ypos);
                         Path &p = minionEntity.get<Path>();
-                        unsigned int id1, id2; //vertex ID's
-                        id1 = p.nearestVertID;
-                        id2 = closeVert->id;
-                        //perform path algorithm. 
-                        gptr->shortestPath(id1);
-                        // now that the algorithm is finished, figure out
-                        // the vertices in it and give them to the entity to follow
-                        p.vertices = gptr->getPath(id1, id2);
-                   // }
-               // }
+                        unsigned int originID, nextID, destID; //vertex ID's
+                        shared_ptr<Vertex> nextPtr = p.vertices.front(); // might be null
+                        originID = p.nearestVertID;
+                        nextID =  nextPtr->id;
+                        destID = destVert->id;
+                        // perform path algorithm. 
+                        // however, if the entity is in transition, we need
+                        // run the algorith twice: once for its destination
+                        // and once for the vertex it came from
+                        gptr->shortestPath(originID);
+                        queue<shared_ptr<Vertex>> pathFromOrigin = gptr->getPath(originID, destID);
+                        queue<shared_ptr<Vertex>> chosenPath = pathFromOrigin; // by default
+
+                        if(nextPtr != nullptr){
+                            // we need to run the algorithm again
+                            gptr->shortestPath(nextID);
+                            queue<shared_ptr<Vertex>> pathFromNext;
+                            pathFromNext = gptr->getPath(nextID, destID);
+
+                            // Then, choose the option with the fewest edges.
+                            // If they have the same number of edges, choose the
+                            // option with the least distance from the entity
+                            queue<Vertex>::size_type lenFromOrigin = pathFromOrigin.size();
+                            queue<Vertex>::size_type lenFromNext = pathFromNext.size();
+
+                            if(lenFromOrigin == lenFromNext){
+                                shared_ptr<Vertex> origPtr = gptr->getVertex(originID);
+                                f32 x1, y1, x2, y2;
+                                x1 = destVert->xpos;
+                                y1 = destVert->ypos;
+
+                                x2 = nextPtr->xpos;
+                                y2 = nextPtr->ypos;
+                                f32 distOrigin = calcDistance(x1,y1,x2,y2);
+
+                                x2 = origPtr->xpos;
+                                y2 = origPtr->ypos;
+                                f32 distNext = calcDistance(x1, y1, x2, y2);
+
+                                if(distOrigin < distNext){
+                                    chosenPath = pathFromOrigin;
+                                }
+                                else{
+                                    chosenPath = pathFromNext;
+                                }
+                            }
+                            else if (lenFromOrigin < lenFromNext){
+                                chosenPath = pathFromOrigin;
+                            }
+                            else{
+                                chosenPath = pathFromNext;
+                            }
+
+                        }
+                        p.vertices = chosenPath;
+                    }
+                }
             }
         }
     }

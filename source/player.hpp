@@ -30,13 +30,6 @@ class Player
   public:
     unsigned int hp = 100; // player health. do fanfare and restart if 0
     u32 crosscolor = 0xFFFFFFFF;
-    Player(int _x, int _y, int _id, GRRLIB_texImg *_crosshair) : xpos(_x),
-                                                        ypos(_y),
-                                                        crosshairtex(_crosshair),
-                                                        id(_id)
-    {
-    }
-
     void draw(void);
     void movex(double amount);
     void movey(double amount);
@@ -46,6 +39,15 @@ class Player
     int id;
     GRRLIB_texImg *crosshairtex;
     shared_ptr<Entity> grabbed;
+
+    Player(int _x, int _y, int _id, GRRLIB_texImg *_crosshair):
+        xpos(_x),
+        ypos(_y),
+        id(_id),
+        crosshairtex(_crosshair)
+                                                        
+    {
+    }
 };
 
 // A component that lets systems access the players

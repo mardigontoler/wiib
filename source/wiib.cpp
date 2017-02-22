@@ -121,16 +121,6 @@ class Wiib
 
     void playState(void)
     {
-            //for(auto entity : entities.with<Path,HitPoints>()){
-                // shared_ptr<Vertex> closeVert = g.getNearestVertex(x,y);
-                // Path &p = entity.get<Path>();
-                // unsigned int id1, id2;
-                // id1 = p.nearestVertID;
-                // id2 = closeVert->id;
-                // g.shortestPath(id1);
-                // p.vertices = g.getPath(id1, id2);
-                // sprintf(buffer, "%d  ", id2);
-
         // drawing game entities
         renderTiles(tilestexture, level1data, level1width);
         player1->draw();
@@ -173,7 +163,8 @@ class Wiib
             // we use the remainder of this division for the horizontal position
             GRRLIB_DrawTile((i % width) * 32,
                             j * 32,
-                            tilemap, 0, 1, 1, 0xFFFFFFFF, tileIndices[i] - 1);
+                            tilemap, 0, 1, 1, 0xFFFFFFFF,
+                            tileIndices[i] - 1);
         }
     }
 

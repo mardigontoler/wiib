@@ -1,4 +1,6 @@
 msys.bat.lnk
+*.swp
+remoteBuild.sh
 release/
 *.py
 *.hpp.gch
