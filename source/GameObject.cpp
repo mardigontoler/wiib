@@ -42,7 +42,7 @@ void PathSystem::update(float time)
 {
     tuple<f32, f32> unitVect;
     f32 xcomp, ycomp;
-    f32 speedFactor = 2.25;
+    f32 speedFactor = 0.1;
     for (auto entity : entities().with<Path, Status>())
     {
         Status &status = entity.get<Status>();
@@ -75,8 +75,8 @@ void PathSystem::update(float time)
                                               currentDest->ypos);
                     xcomp = get<0>(unitVect);
                     ycomp = get<1>(unitVect);
-                    status.xpos += xcomp * speedFactor;
-                    status.ypos += ycomp * speedFactor;
+                    status.xpos += xcomp * speedFactor * time;
+                    status.ypos += ycomp * speedFactor * time;
                 }
             }
         }

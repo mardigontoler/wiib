@@ -17,6 +17,7 @@
 
 #include <grrlib.h>
 #include <stdlib.h>
+#include <chrono>
 #include <cstdlib>
 #include <cstdio>
 #include <wiiuse/wpad.h>
@@ -53,6 +54,8 @@ class Wiib
 {
   private:
     bool finished = false;
+
+    float timeDeltaMilli;
 
     vector<GRRLIB_texImg *> texPointers;
     GRRLIB_texImg *menutexture;
@@ -126,7 +129,7 @@ class Wiib
         player1->draw();
         player2->draw();
 
-        playSystems.update(0);
+        playSystems.update(timeDeltaMilli);
     }
 
     void pauseState(void)
@@ -212,11 +215,12 @@ class Wiib
         ecs::Entity graphEnt = entities.create();
         graphEnt.add<GraphPointer>(graphptr);
 
-
+        timeDeltaMilli = 6.0;
         while (!finished)
         {
             WPAD_ScanPads(); // Scan the Wiimotes
 
+            auto time0 = chrono::high_resolution_clock::now();
             // If [HOME] was pressed on the first Wiimote, break out of the loop
             if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)
                 sstack.pushState(exitlambda);
@@ -226,9 +230,13 @@ class Wiib
             sstack.top()();
             // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
             //Allegiance& alleg = testent.get<Allegiance>();
-            sprintf(buffer, "%d  ", rand() % 2);
+            sprintf(buffer, "%lf  ", timeDeltaMilli);
             GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
+
+            auto time1 = chrono::high_resolution_clock::now();
+            chrono::duration<float> timeDeltaMilli = 
+                chrono::duration_cast<chrono::duration<float>>(time1 - time0);
         }
         freeAllTextures();
         GRRLIB_FreeTTF(rawptrfont);
