@@ -21,7 +21,7 @@
 #define TILESIZE 32
 #define WINDOWWIDTH 640
 #define WINDOWHEIGHT 480
-#define CURSORSPEED 3
+#define CURSORSPEED 4
 
 // color constants in hex
 #define GRRLIB_WHITE 0xFFFFFFFF

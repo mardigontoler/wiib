@@ -18,8 +18,8 @@
 #include "misc.hpp"
 #include <tuple>
 #include <cstdlib>
-#include <cstdlib>
 #include <functional>
+#include <ctime>
 
 using std::tuple;
 f32 calcDistance(f32 x1, f32 y1, f32 x2, f32 y2){
@@ -48,8 +48,9 @@ tuple<f32, f32> calcUnitVector(f32 x1, f32 y1, f32 x2, f32 y2){
 // then can randomly invert the components
 tuple<f32, f32> noise(f32 min, f32 max){
     f32 xcom, ycom;
-    xcom = rand() % 75 * (rand() % 2 == 0 ? 1 : -1);
-    ycom = rand() % 75 * (rand() % 2 == 0 ? 1 : -1);
+    srand(time(0));
+    xcom = (rand() % 75 + 25) * (rand() % 2 == 0 ? 1 : -1);
+    ycom = (rand() % 75 + 25) * (rand() % 2 == 0 ? 1 : -1);
     return std::make_tuple(xcom, ycom);
 }
 

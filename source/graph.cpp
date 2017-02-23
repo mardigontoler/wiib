@@ -92,11 +92,6 @@ set<shared_ptr<Vertex>> Graph::getAdjTo(unsigned int _id)
         if (vert->id == _id)
         {
             return vert->adjVerticesPtrs;
-//            for (shared_ptr<Vertex> padj : vert->adjVerticesPtrs)
-//            {
-//                result.push_back(padj);
-//            }
-//            return result;
         }
     }
     return emptySet; // should be empty if the id was invalid

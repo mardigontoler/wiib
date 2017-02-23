@@ -42,6 +42,7 @@ void PathSystem::update(float time)
 {
     tuple<f32, f32> unitVect;
     f32 xcomp, ycomp;
+    f32 speedFactor = 2.25;
     for (auto entity : entities().with<Path, Status>())
     {
         Status &status = entity.get<Status>();
@@ -53,7 +54,8 @@ void PathSystem::update(float time)
             if (currentDest != nullptr)
             {
                 if (calcDistance(status.xpos, status.ypos,
-                             currentDest->xpos, currentDest->ypos) < path.radius)
+                             currentDest->xpos + status.xnoise, 
+                             currentDest->ypos + status.ynoise) < path.radius)
                 {
                     // we reached our destination
                     // we don't want to move towards
@@ -69,12 +71,12 @@ void PathSystem::update(float time)
                     // the next vertex, so find from the entity
                     // to the vertex at the front of the queue
                     unitVect = calcUnitVector(status.xpos, status.ypos,
-                                              currentDest->xpos + status.xnoise,
-                                              currentDest->ypos + status.ynoise);
+                                              currentDest->xpos,
+                                              currentDest->ypos);
                     xcomp = get<0>(unitVect);
                     ycomp = get<1>(unitVect);
-                    status.xpos += xcomp;
-                    status.ypos += ycomp;
+                    status.xpos += xcomp * speedFactor;
+                    status.ypos += ycomp * speedFactor;
                 }
             }
         }
