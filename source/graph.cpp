@@ -84,21 +84,22 @@ shared_ptr<Vertex> Graph::getVertex(unsigned int _id)
 
 // get a list of pointers to all the adjacent vertices to the vertex with
 // the specified id
-vector<shared_ptr<Vertex>> Graph::getAdjTo(unsigned int _id)
+set<shared_ptr<Vertex>> Graph::getAdjTo(unsigned int _id)
 {
-    vector<shared_ptr<Vertex>> result;
+    set<shared_ptr<Vertex>> emptySet;
     for (shared_ptr<Vertex> vert : vertices)
     {
         if (vert->id == _id)
         {
-            for (shared_ptr<Vertex> padj : vert->adjVerticesPtrs)
-            {
-                result.push_back(padj);
-            }
-            return result;
+            return vert->adjVerticesPtrs;
+//            for (shared_ptr<Vertex> padj : vert->adjVerticesPtrs)
+//            {
+//                result.push_back(padj);
+//            }
+//            return result;
         }
     }
-    return result; // should be empty if the id was invalid
+    return emptySet; // should be empty if the id was invalid
 }
 
 

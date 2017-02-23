@@ -82,5 +82,5 @@ class Graph
     // labelled id2
     queue<shared_ptr<Vertex>> getPath(unsigned int id1, unsigned int id2);
 
-    vector<shared_ptr<Vertex>> getAdjTo(unsigned int _id);
+    set<shared_ptr<Vertex>> getAdjTo(unsigned int _id);
 };
