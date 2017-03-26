@@ -54,14 +54,16 @@ void PathSystem::update(float time)
             if (currentDest != nullptr)
             {
                 if (calcDistance(status.xpos, status.ypos,
-                             currentDest->xpos + status.xnoise, 
-                             currentDest->ypos + status.ynoise) < path.radius)
+                             currentDest->xpos, 
+                             currentDest->ypos) < path.radius)
                 {
                     // we reached our destination
                     // we don't want to move towards
                     // this vertex anymore, so dequeue it
                     // Also, this vertex will now be the one that
                     // the entity is currently at
+                    status.xpos = currentDest->xpos + status.xnoise;
+                    status.ypos = currentDest->ypos;
                     path.nearestVertID = currentDest->id;
                     path.vertices.pop();
                 }
@@ -197,6 +199,10 @@ void InputSystem::update(float time){
                         }
                         p.vertices = chosenPath; // set to result of algorithm
                         // also, give the status some noise for positioning
+                        Status& status = minionEntity.get<Status>();
+                        tuple<f32, f32> n = noise(10);
+                        status.xnoise = get<0>(n);
+                        status.ynoise = get<1>(n);
                     }
                 }
             }

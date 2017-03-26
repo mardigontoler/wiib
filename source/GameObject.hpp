@@ -85,7 +85,7 @@ struct GraphPointer{
 struct Path{
   unsigned int nearestVertID;
   queue<shared_ptr<Vertex>> vertices;
-  f32 radius = 8;
+  f32 radius = 11;
 };
 
 class PathSystem : public System

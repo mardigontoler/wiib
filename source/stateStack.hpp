@@ -18,13 +18,13 @@
 #pragma once
 #include <stack>
 #include <functional>
-using namespace std;
 class stateStack
 {
   public:
-    stack<function<void()>> states; // pointers to functions
-    void pushState(function<void()> f);
-    function<void()> top(void)
+    std::stack<std::function<void()>> states; // pointers to functions
+    void pushState(std::function<void()> f);
+
+    std::function<void()> top(void)
     {
 	return states.top();
     };
