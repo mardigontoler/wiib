@@ -17,17 +17,8 @@
 
 #pragma once
 
-#include "grrlib.h"
 #include "ecs.h"
 #include "GameObject.hpp"
 
-GRRLIB_texImg* findTex(ecs::EntityManager& entities, string name){
+GRRLIB_texImg* findTex(ecs::EntityManager&, string);
 
-    for(auto texPtrComp : entities.with<TexPointer>()){
-        TexPointer& texPtr = texPtrComp.get<TexPointer>();
-        if(texPtr.name.compare(name) == 0){
-            return texPtr.ptexture;
-        }
-    }
-    return NULL;
-}
