@@ -22,6 +22,7 @@
 #define WINDOWWIDTH 640
 #define WINDOWHEIGHT 480
 #define CURSORSPEED 4
+#define AGGRORADIUS 75
 
 // color constants in hex
 #define GRRLIB_WHITE 0xFFFFFFFF

@@ -48,7 +48,7 @@
 
 using namespace std;
 
-char buffer[256]; // temporary buffer used for printing
+char buffer[256]; // buffer used for printing
 
 class Wiib
 {
@@ -88,27 +88,31 @@ class Wiib
 
     // this needs to be called before a texture is used in sprites and stuff
     // these will be cleaned up with the freAllTextures method
-    GRRLIB_texImg *registerTexture(const u8 *data)
+    GRRLIB_texImg *registerTexture(string name, const u8 *data)
     {
         GRRLIB_texImg *ptex = GRRLIB_LoadTexture(data);
         texPointers.push_back(ptex);
+        ecs::Entity texPtrComponent = entities.create();
+        texPtrComponent.add<TexPointer>(name, ptex);
         return ptex;
     }
 
     void freeAllTextures(void)
     {
-        for (auto &texture : texPointers)
+        for (auto texPtrComp : entities.with<TexPointer>())
         {
-            GRRLIB_FreeTexture(texture);
+            GRRLIB_texImg *ptr = texPtrComp.get<TexPointer>().ptexture;
+            GRRLIB_FreeTexture(ptr);
+            texPtrComp.destroy();
         }
     }
 
     Wiib() : playSystems(entities)
     {
         // try to load up sprite textures and the font
-        menutexture = registerTexture(wiiblogo);
-        tilestexture = registerTexture(tiles);
-        crosshair1 = GRRLIB_LoadTexture(circle);
+        menutexture = registerTexture("logo",wiiblogo);
+        tilestexture = registerTexture("tiles",tiles);
+        crosshair1 = registerTexture("defaultCircle", circle);
         
         player1.reset(new Player(10, 10, 1, crosshair1)); // resetting shared_ptr
         player2.reset(new Player(80, 80, 2, crosshair1));
@@ -210,6 +214,15 @@ class Wiib
             testent.add<Allegiance>(1);
             testent.add<Status>(50 + 32 * i, 200);
         }
+
+        ecs::Entity base2 = entities.create();
+        base2.add<PlayerBase>();
+        base2.add<Status>(50, 50);
+        base2.add<HitPoints>(100);
+        base2.add<Allegiance>(2);
+
+        
+
         // we need to register the graph as an entity so that
         // systems can get at it
         ecs::Entity graphEnt = entities.create();
@@ -228,8 +241,6 @@ class Wiib
             GRRLIB_FillScreen(GRRLIB_BLACK);
 
             sstack.top()();
-            // GRRLIB_DrawTile(275, 275, tilestexture, 0, 1, 1, 0xFFFFFFFF, 0);
-            //Allegiance& alleg = testent.get<Allegiance>();
             sprintf(buffer, "%lf  ", timeDeltaMilli);
             GRRLIB_PrintfTTF(200, 200, rawptrfont, buffer, 30, 0x55FFFFFF);
             GRRLIB_Render(); // Render the frame buffer to the TV
@@ -241,7 +252,7 @@ class Wiib
         freeAllTextures();
         GRRLIB_FreeTTF(rawptrfont);
 
-        GRRLIB_Exit(); // Be a good boy, clear the memory allocated by GRRLIB
+        GRRLIB_Exit(); // clear the memory allocated by GRRLIB
         exit(0);       // Use exit() to exit a program, do not use 'return' from main()
     }
 };

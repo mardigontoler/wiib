@@ -14,16 +14,3 @@
 
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-#pragma once
-#include <cmath>
-#include <tuple>
-
-
-typedef float f32;
-
-f32 calcDistance(f32 x1, f32 y1, f32 x2, f32 y2);
-
-std::tuple<f32, f32> noise(int);
-
-std::tuple<f32, f32> calcUnitVector(f32 x1, f32 y1, f32 x2, f32 y2);

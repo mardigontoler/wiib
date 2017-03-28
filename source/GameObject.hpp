@@ -36,7 +36,7 @@ struct HitPoints
   HitPoints(int _val) : hp(_val)
   {
   }
-  int hp;
+  int hp ;
 };
 
 // the id of the player to ally with
@@ -55,7 +55,12 @@ struct Status
   }
   f32 xpos, ypos, xnoise, ynoise;
   f32 stepSpeed = 5;
-  bool grabbed = false;
+};
+
+struct Grabbable{
+};
+
+struct Projectile{
 };
 
 struct Drawable
@@ -68,10 +73,29 @@ struct Drawable
 };
 
 
+// A component to represent the bases of both players
+// Entites with this should also have an allegiance component
+struct PlayerBase
+{
+    PlayerBase(){}
+};
+
+
 // Make a component that simply stores a smart pointer
 // to the current graph, so that systems can see the graph
 struct GraphPointer{
     shared_ptr<Graph> gptr;
+};
+
+struct TexPointer
+{
+    TexPointer(string _name, GRRLIB_texImg *_ptexture ):
+            name(_name),
+            ptexture(_ptexture)
+    {
+    }
+    string name;
+    GRRLIB_texImg *ptexture;
 };
 
 
@@ -94,6 +118,18 @@ class PathSystem : public System
     void update(float time) override;
 };
 
+class MinionLogicSystem : public System
+{
+    public:
+    void update(float time) override;
+};
+
+class ProjectileSystem : public System
+{
+    public:
+    void update(float time) override;
+};
+
 
 
 
@@ -109,3 +145,6 @@ class InputSystem : public System
   public:
     void update(float time) override;
 };
+
+
+

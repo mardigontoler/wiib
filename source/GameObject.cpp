@@ -24,6 +24,7 @@
 #include <ctime>
 #include "player.hpp"
 #include "properties.hpp"
+#include "entityUtil.hpp"
 #include <cstdlib>
 
 f32 x;
@@ -82,6 +83,35 @@ void PathSystem::update(float time)
                 }
             }
         }
+    }
+}
+
+
+void MinionLogicSystem::update(float time){
+    for(auto minion : entities().with<Path, Allegiance>()){
+        Status& minionStatus = minion.get<Status>();
+        // get the status of anything  with a different allegiance
+        if(rand()%25 == 0){ // simulate a random cooldown
+            for(auto base : entities().with<Allegiance, Status>()){
+                Status& enemyStatus = base.get<Status>();
+                if(calcDistance(minionStatus.xpos, minionStatus.ypos, enemyStatus.xpos, enemyStatus.ypos) < AGGRORADIUS){
+                    // fire a projectile at the enemy entity
+                    ecs::Entity projectile = entities().create();
+                    projectile.add<Status>(minionStatus.xpos, minionStatus.ypos);
+                    projectile.add<Allegiance>(minion.get<Allegiance>().alliedID);
+                    projectile.add<Projectile>();
+                    GRRLIB_texImg *texPtr = findTex(entities(), "projectile1");
+                    projectile.add<Drawable>(texPtr);
+                }
+            }
+        }
+    }
+}
+
+
+void ProjectileSystem::update(float time){
+    for(auto projectile : entities().with<Status, Allegiance, Projectile>()){
+
     }
 }
 

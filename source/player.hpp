@@ -28,7 +28,6 @@
 class Player
 {
   public:
-    unsigned int hp = 100; // player health. 
     u32 crosscolor = 0xFFFFFFFF;
     void draw(void);
     void movex(double amount);

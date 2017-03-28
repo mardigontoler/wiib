@@ -16,14 +16,18 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <cmath>
-#include <tuple>
 
+#include "grrlib.h"
+#include "ecs.h"
+#include "GameObject.hpp"
 
-typedef float f32;
+GRRLIB_texImg* findTex(ecs::EntityManager& entities, string name){
 
-f32 calcDistance(f32 x1, f32 y1, f32 x2, f32 y2);
-
-std::tuple<f32, f32> noise(int);
-
-std::tuple<f32, f32> calcUnitVector(f32 x1, f32 y1, f32 x2, f32 y2);
+    for(auto texPtrComp : entities.with<TexPointer>()){
+        TexPointer& texPtr = texPtrComp.get<TexPointer>();
+        if(texPtr.name.compare(name) == 0){
+            return texPtr.ptexture;
+        }
+    }
+    return NULL;
+}
