@@ -201,6 +201,7 @@ class Wiib
         playSystems.add<InputSystem>();
         playSystems.add<MinionLogicSystem>();
         playSystems.add<ProjectileSystem>();
+        playSystems.add<HealthSystem>();
 
         // create Player Entities out of the pointers to
         // the player objects

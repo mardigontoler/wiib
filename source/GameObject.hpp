@@ -54,13 +54,19 @@ struct Status
   {
   }
   f32 xpos, ypos, xnoise, ynoise;
-  f32 stepSpeed = 5;
+  f32 stepSpeed = 0.1;
 };
 
 struct Grabbable{
 };
 
-struct Projectile{
+struct Solid{
+};
+
+struct Projectile{ 
+    Projectile(f32 _xcomp, f32 _ycomp): xcomp(_xcomp), ycomp(_ycomp){}
+    f32 xcomp, ycomp;
+    int damage = 10;
 };
 
 struct Drawable
@@ -100,7 +106,7 @@ struct TexPointer
 
 
 
-// estimations include the destination Vertex itself
+// include the destination Vertex itself
 // as well as a path that leads to it, implemented
 // as a queue of pointers to vertices
 // The system that works with this component
@@ -125,6 +131,12 @@ class MinionLogicSystem : public System
 };
 
 class ProjectileSystem : public System
+{
+    public:
+    void update(float time) override;
+};
+
+class HealthSystem : public System
 {
     public:
     void update(float time) override;

@@ -43,7 +43,6 @@ void PathSystem::update(float time)
 {
     tuple<f32, f32> unitVect;
     f32 xcomp, ycomp;
-    f32 speedFactor = 0.1;
     for (auto entity : entities().with<Path, Status>())
     {
         Status &status = entity.get<Status>();
@@ -78,8 +77,8 @@ void PathSystem::update(float time)
                                               currentDest->ypos);
                     xcomp = get<0>(unitVect);
                     ycomp = get<1>(unitVect);
-                    status.xpos += xcomp * speedFactor * time;
-                    status.ypos += ycomp * speedFactor * time;
+                    status.xpos += xcomp * status.stepSpeed * time;
+                    status.ypos += ycomp * status.stepSpeed * time;
                 }
             }
         }
@@ -94,13 +93,18 @@ void MinionLogicSystem::update(float time){
         if(rand()%25 == 0){ // simulate a random cooldown
             for(auto enemy : entities().with<Allegiance, Status>()){
                 Status& enemyStatus = enemy.get<Status>();
-                if(calcDistance(minionStatus.xpos, minionStatus.ypos, enemyStatus.xpos, enemyStatus.ypos) < AGGRORADIUS
+                f32 mx = minionStatus.xpos;
+                f32 my = minionStatus.ypos;
+                f32 ex = enemyStatus.xpos;
+                f32 ey = enemyStatus.ypos;
+                if(calcDistance(mx, my, ex, ey) < AGGRORADIUS
                         && minion.get<Allegiance>().alliedID != enemy.get<Allegiance>().alliedID){
                     // fire a projectile at the enemy entity
                     ecs::Entity projectile = entities().create();
                     projectile.add<Status>(minionStatus.xpos, minionStatus.ypos);
                     projectile.add<Allegiance>(minion.get<Allegiance>().alliedID);
-                    projectile.add<Projectile>();
+                    tuple<f32, f32> unitVect = calcUnitVector(mx,my,ex,ey);
+                    projectile.add<Projectile>(get<0>(unitVect), get<1>(unitVect));
                     GRRLIB_texImg *texPtr = findTex(entities(), "bullet1");
                     projectile.add<Drawable>(texPtr);
                 }
@@ -111,11 +115,60 @@ void MinionLogicSystem::update(float time){
 
 
 void ProjectileSystem::update(float time){
-    for(auto projectile : entities().with<Status, Allegiance, Projectile>()){
+    for(auto proj : entities().with<Status, Allegiance, Projectile>()){
+        // move them in their direction
+        // instead of collision detection, just check if they're close to an enemy
+        bool destroyThis = false;
+        Status& projStatus = proj.get<Status>();
+        Allegiance& projAlleg = proj.get<Allegiance>();
+        Projectile& projectile = proj.get<Projectile>();
+        for(auto enemy : entities().with<Status, Allegiance, HitPoints>()){
+            Status& enemyStatus = enemy.get<Status>();
+            Allegiance& enemyAlleg = enemy.get<Allegiance>();
+            HitPoints& enemyHP = enemy.get<HitPoints>();
+            if(enemyAlleg.alliedID != projAlleg.alliedID){
+                if(calcDistance(projStatus.xpos , projStatus.ypos, enemyStatus.xpos, enemyStatus.ypos) < 8){
+                    enemyHP.hp -= projectile.damage; 
+                    destroyThis = true;
+                    break;
+                }
+            }
+        }
+
+        // also check for proximity with solids
+
+
+        // destroy if offscreen
+        if(projStatus.xpos < 0 || projStatus.xpos > WINDOWWIDTH
+                || projStatus.ypos < 0 || projStatus.ypos > WINDOWHEIGHT){
+            proj.destroy();
+            destroyThis = true;
+            break;
+
+        }
+
+        if(destroyThis){
+            proj.destroy();
+        }
+        else{
+
+            projStatus.xpos += projStatus.stepSpeed * projectile.xcomp * time;
+            projStatus.ypos += projStatus.stepSpeed * projectile.ycomp * time;
+        }
 
     }
 }
 
+
+
+void HealthSystem::update(float time){
+    for(auto ent : entities().with<HitPoints>()){
+        HitPoints& hitPoints = ent.get<HitPoints>();
+        if(hitPoints.hp <= 0 ){
+            ent.destroy();
+        }
+    }
+}
 
 
 void InputSystem::update(float time){
