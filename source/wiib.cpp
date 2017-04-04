@@ -45,6 +45,7 @@
 #include "res/tiles.h"
 #include "res/gentlesir.h"
 #include "res/testMapNodes.hpp"
+#include "res/bullet1.h"
 
 using namespace std;
 
@@ -113,6 +114,7 @@ class Wiib
         menutexture = registerTexture("logo",wiiblogo);
         tilestexture = registerTexture("tiles",tiles);
         crosshair1 = registerTexture("defaultCircle", circle);
+        registerTexture("bullet1",bullet1);
         
         player1.reset(new Player(10, 10, 1, crosshair1)); // resetting shared_ptr
         player2.reset(new Player(80, 80, 2, crosshair1));
@@ -197,6 +199,9 @@ class Wiib
         playSystems.add<DrawingSystem>();
         playSystems.add<PathSystem>();
         playSystems.add<InputSystem>();
+        playSystems.add<MinionLogicSystem>();
+        playSystems.add<ProjectileSystem>();
+        playSystems.add<HealthSystem>();
 
         // create Player Entities out of the pointers to
         // the player objects
